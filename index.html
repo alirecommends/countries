@@ -194,8 +194,8 @@
         };
 
         const UI_TEXT = {
-            title: { en: "Global Data Explorer 3D", fa: "کاوشگر داده‌های جهانی سه‌بعدی" },
-            subtitle: { en: "Interactive Multi-Metric Analysis", fa: "تحلیل تعاملی چند متغیره" },
+            title: { en: "Global Data Explorer 3D", fa: "کاوشگر داده‌های کشورها" },
+            subtitle: { en: "Interactive Multi-Metric Analysis", fa: "مقایسه شاخص‌های دموکراتیک کشورها. می‌توانید از طریق منو محورها را کم و زیاد کنید." },
             by: { en: "By Ali Noorani ↗️", fa: "اثر علی نورانی ↗️" },
             viewControls: { en: "View Controls", fa: "کنترل‌های نما" },
             axesVisibility: { en: "Axes Visibility", fa: "نمایش محورها" },
@@ -212,7 +212,7 @@
             selectedMetrics: { en: "Selected Metrics", fa: "شاخص‌های انتخابی" },
             countryProfile: { en: "Country Profile", fa: "نمایه کشور" },
             aboutMe: { en: "About Me", fa: "درباره من" },
-            aboutText: { en: "I am a Product Designer and data visualization enthusiast exploring the intersection of politics, economics, and culture through interactive 3D web technologies.", fa: "من طراح محصول و علاقه‌مند به تصویرسازی داده‌ها هستم که تقاطع سیاست، اقتصاد و فرهنگ را از طریق فناوری‌های وب سه‌بعدی تعاملی کاوش می‌کنم." },
+            aboutText: { en: "I am a Product Designer and data visualization enthusiast exploring the intersection of politics, economics, and culture through interactive 3D web technologies.", fa: "من یک طراح محصول و علاقه‌مند به تجسم بصری داده‌ها هستم که در تقاطع سیاست، اقتصاد و فرهنگ از طریق فناوری‌های وب سه‌بعدی تعاملی کاوش می‌کنم." },
             welcomeText: {
                 en: "Unlike traditional 2D charts, this interactive map visualizes nations across multiple dimensions. Explore the intricate relationships between Economic Freedom, Cultural Values, and Governance.",
                 fa: "برخلاف نمودارهای سنتی دوبعدی، این نقشه تعاملی کشورها را در ابعاد مختلف تجسم می‌کند. روابط پیچیده بین آزادی اقتصادی، ارزش‌های فرهنگی و حکمرانی را کاوش کنید."
@@ -784,43 +784,34 @@
             const handleScreenshot = () => {
                 const glCanvas = document.querySelector('canvas');
                 if (glCanvas) {
-                    // Create a temporary canvas to combine the WebGL scene and the watermark
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = glCanvas.width;
                     tempCanvas.height = glCanvas.height;
                     const ctx = tempCanvas.getContext('2d');
 
-                    // Draw the 3D scene onto the 2D canvas
                     ctx.drawImage(glCanvas, 0, 0);
 
-                    // Scale font based on device pixel ratio so it looks sharp on retina displays
-                    const pixelRatio = window.devicePixelRatio || 1;
-                    const baseFontSize = 18 * pixelRatio;
+                    // Scale font based on canvas resolution to keep it consistent across devices
+                    const baseFontSize = Math.max(14, tempCanvas.width * 0.012);
 
-                    // Set text properties
                     ctx.textAlign = 'right';
                     ctx.textBaseline = 'bottom';
 
-                    // Add subtle shadow for contrast on both light and dark backgrounds
                     ctx.shadowColor = theme === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
-                    ctx.shadowBlur = 6 * pixelRatio;
+                    ctx.shadowBlur = 4;
                     ctx.fillStyle = theme === 'dark' ? 'rgba(255,255,255,0.9)' : 'rgba(15,23,42,0.9)';
 
-                    // Positioning
-                    const paddingX = 24 * pixelRatio;
-                    const paddingY = 24 * pixelRatio;
+                    const paddingX = baseFontSize * 1.5;
+                    const paddingY = baseFontSize * 1.5;
                     const textX = tempCanvas.width - paddingX;
                     const textY = tempCanvas.height - paddingY;
 
-                    // Draw Line 2 (URL)
                     ctx.font = `500 ${baseFontSize * 0.8}px sans-serif`;
                     ctx.fillText("democracyindex.vercel.app", textX, textY);
 
-                    // Draw Line 1 (Name)
                     ctx.font = `bold ${baseFontSize}px sans-serif`;
                     ctx.fillText("A Visual by Ali Noorani", textX, textY - (baseFontSize * 1.2));
 
-                    // Generate image and download
                     const image = tempCanvas.toDataURL("image/png");
                     const link = document.createElement('a');
                     link.download = 'global-data-explorer.png';
@@ -1037,11 +1028,10 @@
 
         function App() {
             const [hovered, setHovered] = useState(null);
-            const [view, setView] = useState({ mode: 'front' }); // Default to front (2D map)
+            const [view, setView] = useState({ mode: 'front' });
             const [lang, setLang] = useState('en');
-            const [theme, setTheme] = useState('dark');
+            const [theme, setTheme] = useState('light'); // Default to light mode
 
-            // Turn off Z-axis by default to create a true 2D default map
             const [config, setConfig] = useState({ axes: { x: true, y: true, z: false }, showLabels: true, showIdeologies: false, showFigures: false });
             const [mapping, setMapping] = useState({ x: 'econ', y: 'cult', z: 'auth' });
             const [tourStep, setTourStep] = useState(-1);
