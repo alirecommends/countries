@@ -32,8 +32,6 @@
             scrollbar-width: none;
         }
 
-
-
         /* Font for Persian HTML Overlay */
         @font-face {
             font-family: 'Dana';
@@ -67,8 +65,9 @@
             font-style: normal;
         }
 
-        /* The !important flag ensures Tailwind does not override this font */
-        .font-fa {
+        /* The !important flag combined with * ensures Tailwind does not override this font on buttons/inputs */
+        .font-fa,
+        .font-fa * {
             font-family: 'Dana', sans-serif !important;
         }
 
@@ -137,55 +136,51 @@
 
         const html = htm.bind(createElement);
 
-        // --- ICONS ---
-        const Icon = ({ path, size = 24, className = "" }) => html`
-            <svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}>
-                ${path}
-            </svg>
-        `;
-
+        // --- ICONS (Robust inline syntax for native parser compatibility) ---
         const Icons = {
-            Info: (props) => html`<${Icon} ...${props} path=${html`<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>`} />`,
-            Settings: (props) => html`<${Icon} ...${props} path=${html`<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>`} />`,
-            Eye: (props) => html`<${Icon} ...${props} path=${html`<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`} />`,
-            EyeOff: (props) => html`<${Icon} ...${props} path=${html`<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>`} />`,
-            Layout: (props) => html`<${Icon} ...${props} path=${html`<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="9" y2="21"/>`} />`,
-            Arrows: (props) => html`<${Icon} ...${props} path=${html`<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>`} />`,
-            User: (props) => html`<${Icon} ...${props} path=${html`<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>`} />`,
-            Globe: (props) => html`<${Icon} ...${props} path=${html`<circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`} />`,
-            Lang: (props) => html`<${Icon} ...${props} path=${html`<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>`} />`,
-            X: (props) => html`<${Icon} ...${props} path=${html`<path d="M18 6 6 18"/><path d="m6 6 12 12"/>`} />`,
-            Play: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 20} height=${props.size || 20} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
-            Skip: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 14} height=${props.size || 14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg>`,
-            Left: (props) => html`<${Icon} ...${props} path=${html`<path d="m15 18-6-6 6-6"/>`} />`,
-            Right: (props) => html`<${Icon} ...${props} path=${html`<path d="m9 18 6-6-6-6"/>`} />`,
-            Twitter: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 24} height=${props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>`,
-            Linkedin: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 24} height=${props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>`,
-            Instagram: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 24} height=${props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
-            Coffee: (props) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${props.size || 18} height=${props.size || 18} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${props.className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>`
+            Info: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+            Settings: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
+            Eye: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+            EyeOff: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`,
+            Layout: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="9" y2="21"/></svg>`,
+            Arrows: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>`,
+            User: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            Globe: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+            Lang: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>`,
+            X: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`,
+            Play: ({ size = 20, className = "", fill = "currentColor" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill=${fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+            Skip: ({ size = 14, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg>`,
+            Left: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="m15 18-6-6 6-6"/></svg>`,
+            Right: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="m9 18 6-6-6-6"/></svg>`,
+            Twitter: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>`,
+            Linkedin: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>`,
+            Instagram: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
+            Coffee: ({ size = 18, className = "", fill = "currentColor" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill=${fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>`,
+            Sun: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+            Moon: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
         };
 
-        const FA_FONT_URL = "./Dana_fonts/Dana-Regular.ttf"; // Match your exact file name here too
+        const FA_FONT_URL = "./Dana_fonts/Dana-Regular.ttf";
 
         // --- CONFIG ---
         const METRICS_CONFIG = {
-            econ: { id: 'econ', label: { en: "Economic Freedom", fa: "آزادی اقتصادی" }, min: 0, max: 100, color: "#2563eb", startLabel: { en: "Planned", fa: "دولتی" }, endLabel: { en: "Free Market", fa: "بازار آزاد" } },
-            cult: { id: 'cult', label: { en: "Cultural Values", fa: "ارزش‌های فرهنگی" }, min: -2.5, max: 2.5, color: "#db2777", startLabel: { en: "Traditional", fa: "سنتی" }, endLabel: { en: "Progressive", fa: "پیشرو" } },
-            auth: { id: 'auth', label: { en: "Democracy Index", fa: "شاخص دموکراسی" }, min: 0, max: 10, color: "#16a34a", startLabel: { en: "Authoritarian", fa: "اقتدارگرا" }, endLabel: { en: "Democratic", fa: "دموکراتیک" } },
-            women: { id: 'women', label: { en: "Women's Rights", fa: "حقوق زنان" }, min: 0, max: 1, color: "#7c3aed", startLabel: { en: "Restricted", fa: "محدود" }, endLabel: { en: "Equal", fa: "برابر" } },
-            edu: { id: 'edu', label: { en: "Education Index", fa: "شاخص آموزش" }, min: 0, max: 1, color: "#d97706", startLabel: { en: "Basic", fa: "پایه" }, endLabel: { en: "Advanced", fa: "پیشرفته" } },
-            stability: { id: 'stability', label: { en: "Political Stability", fa: "ثبات سیاسی" }, min: 0, max: 100, color: "#4f46e5", startLabel: { en: "Unstable", fa: "بی‌ثبات" }, endLabel: { en: "Stable", fa: "باثبات" } },
-            effectiveness: { id: 'effectiveness', label: { en: "Gov. Effectiveness", fa: "کارآمدی دولت" }, min: 0, max: 100, color: "#059669", startLabel: { en: "Ineffective", fa: "ناکارآمد" }, endLabel: { en: "Effective", fa: "کارآمد" } },
-            regulatory: { id: 'regulatory', label: { en: "Regulatory Quality", fa: "کیفیت مقررات" }, min: 0, max: 100, color: "#a78bfa", startLabel: { en: "Poor", fa: "ضعیف" }, endLabel: { en: "High", fa: "بالا" } },
-            rule_law: { id: 'rule_law', label: { en: "Rule of Law", fa: "حاکمیت قانون" }, min: 0, max: 100, color: "#e11d48", startLabel: { en: "Weak", fa: "ضعیف" }, endLabel: { en: "Strong", fa: "قوی" } },
-            corruption: { id: 'corruption', label: { en: "Control of Corruption", fa: "کنترل فساد" }, min: 0, max: 100, color: "#c026d3", startLabel: { en: "High Corruption", fa: "فساد بالا" }, endLabel: { en: "Clean", fa: "پاک" } },
-            health: { id: 'health', label: { en: "Healthcare Access", fa: "دسترسی به بهداشت" }, min: 0, max: 100, color: "#0d9488", startLabel: { en: "Low", fa: "پایین" }, endLabel: { en: "Universal", fa: "همگانی" } },
-            hdi: { id: 'hdi', label: { en: "HDI", fa: "توسعه انسانی" }, min: 0, max: 1, color: "#d97706", startLabel: { en: "Low", fa: "پایین" }, endLabel: { en: "High", fa: "بالا" } }
+            econ: { id: 'econ', label: { en: "Economic Freedom", fa: "آزادی اقتصادی" }, min: 0, max: 100, color: { light: "#2563eb", dark: "#60a5fa" }, startLabel: { en: "Planned", fa: "دولتی" }, endLabel: { en: "Free Market", fa: "بازار آزاد" } },
+            cult: { id: 'cult', label: { en: "Cultural Values", fa: "ارزش‌های فرهنگی" }, min: -2.5, max: 2.5, color: { light: "#db2777", dark: "#f472b6" }, startLabel: { en: "Traditional", fa: "سنتی" }, endLabel: { en: "Progressive", fa: "پیشرو" } },
+            auth: { id: 'auth', label: { en: "Democracy Index", fa: "شاخص دموکراسی" }, min: 0, max: 10, color: { light: "#16a34a", dark: "#4ade80" }, startLabel: { en: "Authoritarian", fa: "اقتدارگرا" }, endLabel: { en: "Democratic", fa: "دموکراتیک" } },
+            women: { id: 'women', label: { en: "Women's Rights", fa: "حقوق زنان" }, min: 0, max: 1, color: { light: "#7c3aed", dark: "#a78bfa" }, startLabel: { en: "Restricted", fa: "محدود" }, endLabel: { en: "Equal", fa: "برابر" } },
+            edu: { id: 'edu', label: { en: "Education Index", fa: "شاخص آموزش" }, min: 0, max: 1, color: { light: "#d97706", dark: "#fbbf24" }, startLabel: { en: "Basic", fa: "پایه" }, endLabel: { en: "Advanced", fa: "پیشرفته" } },
+            stability: { id: 'stability', label: { en: "Political Stability", fa: "ثبات سیاسی" }, min: 0, max: 100, color: { light: "#4f46e5", dark: "#818cf8" }, startLabel: { en: "Unstable", fa: "بی‌ثبات" }, endLabel: { en: "Stable", fa: "باثبات" } },
+            effectiveness: { id: 'effectiveness', label: { en: "Gov. Effectiveness", fa: "کارآمدی دولت" }, min: 0, max: 100, color: { light: "#059669", dark: "#34d399" }, startLabel: { en: "Ineffective", fa: "ناکارآمد" }, endLabel: { en: "Effective", fa: "کارآمد" } },
+            regulatory: { id: 'regulatory', label: { en: "Regulatory Quality", fa: "کیفیت مقررات" }, min: 0, max: 100, color: { light: "#7c3aed", dark: "#a78bfa" }, startLabel: { en: "Poor", fa: "ضعیف" }, endLabel: { en: "High", fa: "بالا" } },
+            rule_law: { id: 'rule_law', label: { en: "Rule of Law", fa: "حاکمیت قانون" }, min: 0, max: 100, color: { light: "#e11d48", dark: "#fb7185" }, startLabel: { en: "Weak", fa: "ضعیف" }, endLabel: { en: "Strong", fa: "قوی" } },
+            corruption: { id: 'corruption', label: { en: "Control of Corruption", fa: "کنترل فساد" }, min: 0, max: 100, color: { light: "#c026d3", dark: "#e879f9" }, startLabel: { en: "High Corruption", fa: "فساد بالا" }, endLabel: { en: "Clean", fa: "پاک" } },
+            health: { id: 'health', label: { en: "Healthcare Access", fa: "دسترسی به بهداشت" }, min: 0, max: 100, color: { light: "#0d9488", dark: "#2dd4bf" }, startLabel: { en: "Low", fa: "پایین" }, endLabel: { en: "Universal", fa: "همگانی" } },
+            hdi: { id: 'hdi', label: { en: "HDI", fa: "توسعه انسانی" }, min: 0, max: 1, color: { light: "#d97706", dark: "#f59e0b" }, startLabel: { en: "Low", fa: "پایین" }, endLabel: { en: "High", fa: "بالا" } }
         };
 
         const UI_TEXT = {
-            title: { en: "Global Data Explorer 3D", fa: "کاوشگر مقایسه داده‌های کشورها" },
-            subtitle: { en: "Interactive Multi-Metric Analysis", fa: "تحلیل تعاملی چند متغیره. می‌توانید نمودار را سه محوره، دو محوره و تک محوره ببینید" },
+            title: { en: "Global Data Explorer 3D", fa: "کاوشگر داده‌های جهانی سه‌بعدی" },
+            subtitle: { en: "Interactive Multi-Metric Analysis", fa: "تحلیل تعاملی چند متغیره" },
             by: { en: "By Ali Noorani ↗️", fa: "اثر علی نورانی ↗️" },
             viewControls: { en: "View Controls", fa: "کنترل‌های نما" },
             axesVisibility: { en: "Axes Visibility", fa: "نمایش محورها" },
@@ -202,7 +197,7 @@
             selectedMetrics: { en: "Selected Metrics", fa: "شاخص‌های انتخابی" },
             countryProfile: { en: "Country Profile", fa: "نمایه کشور" },
             aboutMe: { en: "About Me", fa: "درباره من" },
-            aboutText: { en: "I am a Product Designer and data visualization enthusiast exploring the intersection of politics, economics, and culture through interactive 3D web technologies.", fa: "من یک طراح محصول و علاقه‌مند به تصویرسازی داده‌ها هستم که در تقاطع سیاست، اقتصاد و فرهنگ از طریق فناوری‌ وب تعاملی کنکاش می‌کنم." },
+            aboutText: { en: "I am a Product Designer and data visualization enthusiast exploring the intersection of politics, economics, and culture through interactive 3D web technologies.", fa: "من طراح محصول و علاقه‌مند به تصویرسازی داده‌ها هستم که تقاطع سیاست، اقتصاد و فرهنگ را از طریق فناوری‌های وب سه‌بعدی تعاملی کاوش می‌کنم." },
             support: { en: "Support this project:", fa: "حمایت از این پروژه:" },
             buyCoffee: { en: "Buy Me a Coffee", fa: "یک قهوه مهمانم کن" },
             dataMapping: { en: "Data Mapping", fa: "نگاشت داده‌ها" },
@@ -329,7 +324,7 @@
                 title: { en: "The Nordic Model", fa: "مدل نوردیک" },
                 text: {
                     en: "Bringing it all together: Nordic countries are often misunderstood. They are high on Economic Freedom (Right) and Democracy (Front), but fund welfare through taxes. They are distinct from the Authoritarian Left.",
-                    fa: "ترکیب همه ابعاد: کشورهای نوردیک اغلب اشتباه درک می‌شوند. آن‌ها در آزادی اقتصادی (راست) و دموکراسی (جلو) بالا هستند، اما رفاه را از طریق مالیات تأمین می‌کنند. آن‌ها از چپ اقتدارگرا متمایز هستند."
+                    fa: "ترکیب همه ابعاد: کشورهای نوردیک Pillar اشتباه درک می‌شوند. آن‌ها در آزادی اقتصادی (راست) و دموکراسی (جلو) بالا هستند، اما رفاه را از طریق مالیات تأمین می‌کنند. آن‌ها از چپ اقتدارگرا متمایز هستند."
                 },
                 view: 'default',
                 config: { axes: { x: true, y: true, z: true }, showLabels: true, showIdeologies: true, showFigures: false },
@@ -371,51 +366,73 @@
         };
 
         // --- COMPONENTS ---
-        const WelcomeModal = ({ startTour, close, lang }) => html`
-            <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-md z-50 p-4 font-fa" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
-                <div className="bg-white border border-slate-200 p-8 rounded-2xl shadow-2xl max-w-lg text-center">
-                    <h1 className="text-3xl font-bold text-slate-800 mb-4 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">${UI_TEXT.title[lang]}</h1>
-                    <p className="text-slate-600 mb-8 leading-relaxed">${UI_TEXT.aboutText[lang]}</p>
-                    <div className="flex gap-4 justify-center">
-                        <button onClick=${startTour} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 animate-pulse-ring">
-                            <${Icons.Play} size=${20} fill="currentColor" /> ${UI_TEXT.startTour[lang]}
-                        </button>
-                        <button onClick=${close} className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors">
-                            ${UI_TEXT.explore[lang]}
-                        </button>
+        const WelcomeModal = ({ startTour, close, lang, theme }) => {
+            const bgClass = theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200';
+            const textClass = theme === 'dark' ? 'text-white' : 'text-slate-800';
+            const subtextClass = theme === 'dark' ? 'text-slate-300' : 'text-slate-600';
+            const btnClass = theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100';
+
+            return html`
+                <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-md z-50 p-4 font-fa ${theme === 'dark' ? 'bg-black/80' : 'bg-white/60'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
+                    <div className=${`${bgClass} border p-8 rounded-2xl shadow-2xl max-w-lg text-center`}>
+                        <h1 className=${`text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent`}>${UI_TEXT.title[lang]}</h1>
+                        <p className=${`${subtextClass} mb-8 leading-relaxed`}>${UI_TEXT.aboutText[lang]}</p>
+                        <div className="flex gap-4 justify-center">
+                            <button onClick=${startTour} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 animate-pulse-ring">
+                                <${Icons.Play} size=${20} fill="currentColor" /> ${UI_TEXT.startTour[lang]}
+                            </button>
+                            <button onClick=${close} className=${`px-6 py-3 rounded-xl font-bold transition-colors ${btnClass}`}>
+                                ${UI_TEXT.explore[lang]}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        };
 
-        const TourControls = ({ step, next, prev, skip, lang }) => html`
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/95 border border-slate-200 p-6 rounded-2xl shadow-2xl z-50 w-full max-w-lg font-fa text-center" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold text-slate-800">${TOUR_STEPS[step].title[lang]}</h3>
-                    <span className="text-xs text-slate-500 font-mono">${step + 1} / ${TOUR_STEPS.length}</span>
-                </div>
-                <p className="text-slate-600 mb-6 leading-relaxed text-sm">${TOUR_STEPS[step].text[lang]}</p>
-                <div className="flex justify-between items-center">
-                    <button onClick=${skip} className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1"><${Icons.Skip} size=${14}/> ${UI_TEXT.endTour[lang]}</button>
-                    <div className="flex gap-2">
-                        <button onClick=${prev} disabled=${step === 0} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-600"><${Icons.Left} size=${20} className=${lang === 'fa' ? 'rotate-180' : ''}/></button>
-                        <button onClick=${next} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95">
-                            ${step === TOUR_STEPS.length - 1 ? UI_TEXT.explore[lang] : UI_TEXT.next[lang]} 
-                            <${Icons.Right} size=${16} className=${lang === 'fa' ? 'rotate-180' : ''}/>
-                        </button>
+        const TourControls = ({ step, next, prev, skip, lang, theme }) => {
+            const bgClass = theme === 'dark' ? 'bg-slate-900/95 border-slate-700' : 'bg-white/95 border-slate-200';
+            const textClass = theme === 'dark' ? 'text-white' : 'text-slate-800';
+            const subtextClass = theme === 'dark' ? 'text-slate-300' : 'text-slate-600';
+            const skipClass = theme === 'dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800';
+            const prevBtnClass = theme === 'dark' ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-600';
+
+            return html`
+                <div className=${`absolute bottom-8 left-1/2 -translate-x-1/2 ${bgClass} border p-6 rounded-2xl shadow-2xl z-50 w-full max-w-lg font-fa text-center`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className=${`text-xl font-bold ${textClass}`}>${TOUR_STEPS[step].title[lang]}</h3>
+                        <span className="text-xs text-slate-500 font-mono">${step + 1} / ${TOUR_STEPS.length}</span>
+                    </div>
+                    <p className=${`${subtextClass} mb-6 leading-relaxed text-sm`}>${TOUR_STEPS[step].text[lang]}</p>
+                    <div className="flex justify-between items-center">
+                        <button onClick=${skip} className=${`text-xs flex items-center gap-1 ${skipClass}`}><${Icons.Skip} size=${14}/> ${UI_TEXT.endTour[lang]}</button>
+                        <div className="flex gap-2">
+                            <button onClick=${prev} disabled=${step === 0} className=${`p-2 rounded-lg disabled:opacity-50 ${prevBtnClass}`}><${Icons.Left} size=${20} className=${lang === 'fa' ? 'rotate-180' : ''}/></button>
+                            <button onClick=${next} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95">
+                                ${step === TOUR_STEPS.length - 1 ? UI_TEXT.explore[lang] : UI_TEXT.next[lang]} 
+                                <${Icons.Right} size=${16} className=${lang === 'fa' ? 'rotate-180' : ''}/>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        };
 
-        const EarthGlobe = ({ lang }) => {
+        const EarthGlobe = ({ lang, theme }) => {
             const earthRef = useRef();
             useFrame((state, delta) => { if (earthRef.current) earthRef.current.rotation.y += delta * 0.1; });
+
+            const color = theme === 'dark' ? "#1d4ed8" : "#3b82f6";
+            const wireColor = theme === 'dark' ? "#60a5fa" : "#ffffff";
+            const wireOpacity = theme === 'dark' ? 0.15 : 0.3;
+            const textColor = theme === 'dark' ? "#93c5fd" : "#1e40af";
+            const outlineColor = theme === 'dark' ? "#1e3a8a" : "#fff";
+
             return html`
                 <group ref=${earthRef}>
-                    <mesh><sphereGeometry args=${[5, 64, 64]} /><meshStandardMaterial color="#3b82f6" roughness=${0.5} metalness=${0.1} /></mesh>
-                    <mesh scale=${[1.02, 1.02, 1.02]}><sphereGeometry args=${[5, 32, 32]} /><meshBasicMaterial color="#ffffff" wireframe transparent opacity=${0.3} /></mesh>
-                    <${Billboard} position=${[0, 6.5, 0]}><${Text} fontSize=${0.5} color="#1e40af" outlineWidth=${0.02} outlineColor="#fff" font=${lang === 'fa' ? FA_FONT_URL : undefined}>${UI_TEXT.global[lang]}</${Text}></${Billboard}>
+                    <mesh><sphereGeometry args=${[5, 64, 64]} /><meshStandardMaterial color=${color} roughness=${0.5} metalness=${0.1} /></mesh>
+                    <mesh scale=${[1.02, 1.02, 1.02]}><sphereGeometry args=${[5, 32, 32]} /><meshBasicMaterial color=${wireColor} wireframe transparent opacity=${wireOpacity} /></mesh>
+                    <${Billboard} position=${[0, 6.5, 0]}><${Text} fontSize=${0.5} color=${textColor} outlineWidth=${0.02} outlineColor=${outlineColor} font=${lang === 'fa' ? FA_FONT_URL : undefined}>${UI_TEXT.global[lang]}</${Text}></${Billboard}>
                 </group>
             `;
         };
@@ -448,7 +465,7 @@
             </mesh>
         `;
 
-        const Axis = ({ position, size, startLabel, endLabel, color, visible, lang }) => {
+        const Axis = ({ position, size, startLabel, endLabel, color, visible, lang, theme }) => {
             if (!visible) return null;
             const halfSize = [size[0] / 2, size[1] / 2, size[2] / 2];
             const offset = 2.5;
@@ -456,6 +473,7 @@
             const endPos = [size[0] > 1 ? position[0] + halfSize[0] + offset : position[0], size[1] > 1 ? position[1] + halfSize[1] + offset : position[1], size[2] > 1 ? position[2] + halfSize[2] + offset : position[2]];
             const sAX = size[0] > 1 ? "right" : "center", sAY = size[1] > 1 ? "top" : "middle";
             const eAX = size[0] > 1 ? "left" : "center", eAY = size[1] > 1 ? "bottom" : "middle";
+
             const arrowStartPos = [size[0] > 1 ? position[0] - halfSize[0] : position[0], size[1] > 1 ? position[1] - halfSize[1] : position[1], size[2] > 1 ? position[2] - halfSize[2] : position[2]];
             const arrowEndPos = [size[0] > 1 ? position[0] + halfSize[0] : position[0], size[1] > 1 ? position[1] + halfSize[1] : position[1], size[2] > 1 ? position[2] + halfSize[2] : position[2]];
 
@@ -464,45 +482,50 @@
             else if (size[1] > 1) { rotStart = [0, 0, Math.PI]; rotEnd = [0, 0, 0]; }
             else { rotStart = [-Math.PI / 2, 0, 0]; rotEnd = [Math.PI / 2, 0, 0]; }
 
+            const outlineCol = theme === 'dark' ? "#000" : "#fff";
+
             return html`
                 <group>
                     <mesh position=${position}><boxGeometry args=${size} /><meshStandardMaterial color=${color} transparent opacity=${0.6} /></mesh>
                     <${AxisArrow} position=${arrowEndPos} direction=${rotEnd} color=${color} />
                     <${AxisArrow} position=${arrowStartPos} direction=${rotStart} color=${color} />
-                    <${Billboard} position=${startPos}><${Text} fontSize=${0.8} color=${color} anchorX=${sAX} anchorY=${sAY} outlineWidth=${0.04} outlineColor="#fff" fontWeight="bold" font=${lang === 'fa' ? FA_FONT_URL : undefined}>${startLabel}</${Text}></${Billboard}>
-                    <${Billboard} position=${endPos}><${Text} fontSize=${0.8} color=${color} anchorX=${eAX} anchorY=${eAY} outlineWidth=${0.04} outlineColor="#fff" fontWeight="bold" font=${lang === 'fa' ? FA_FONT_URL : undefined}>${endLabel}</${Text}></${Billboard}>
+                    <${Billboard} position=${startPos}><${Text} fontSize=${0.8} color=${color} anchorX=${sAX} anchorY=${sAY} outlineWidth=${0.04} outlineColor=${outlineCol} fontWeight="bold" font=${lang === 'fa' ? FA_FONT_URL : undefined}>${startLabel}</${Text}></${Billboard}>
+                    <${Billboard} position=${endPos}><${Text} fontSize=${0.8} color=${color} anchorX=${eAX} anchorY=${eAY} outlineWidth=${0.04} outlineColor=${outlineCol} fontWeight="bold" font=${lang === 'fa' ? FA_FONT_URL : undefined}>${endLabel}</${Text}></${Billboard}>
                 </group>
             `;
         };
 
-        const GridPlane = ({ position, rotation, size, color, visible, gridColor }) => {
+        const GridPlane = ({ position, rotation, size, color, visible, gridColor, theme }) => {
             if (!visible) return null;
             return html`
                 <group position=${position} rotation=${rotation}>
                     <gridHelper args=${[size, 10, gridColor, gridColor]} />
-                    <mesh rotation=${[-Math.PI / 2, 0, 0]} position=${[0, -0.05, 0]}><planeGeometry args=${[size, size]} /><meshBasicMaterial color=${color} transparent opacity=${0.1} side=${THREE.DoubleSide} /></mesh>
+                    <mesh rotation=${[-Math.PI / 2, 0, 0]} position=${[0, -0.05, 0]}><planeGeometry args=${[size, size]} /><meshBasicMaterial color=${color} transparent opacity=${theme === 'dark' ? 0.95 : 0.1} side=${THREE.DoubleSide} /></mesh>
                 </group>
             `;
         };
 
-        const IdeologyLabelItem = ({ label, config, lang }) => {
+        const IdeologyLabelItem = ({ label, config, lang, theme }) => {
             const groupRef = useRef();
+
             useFrame(() => {
                 if (groupRef.current) {
                     const targetX = config.axes.x ? label.pos[0] : -10;
                     const targetY = config.axes.y ? label.pos[1] : -10;
                     const targetZ = config.axes.z ? label.pos[2] : -10;
+
                     const targetVec = new THREE.Vector3(targetX, targetY, targetZ);
                     groupRef.current.position.lerp(targetVec, 0.1);
                 }
             });
+
             return html`
                 <${Billboard} ref=${groupRef} position=${label.pos}>
                     <${Text} 
                         fontSize=${0.7} 
                         color=${label.color}
                         outlineWidth=${0.04} 
-                        outlineColor="#ffffff"
+                        outlineColor=${theme === 'dark' ? "#000000" : "#ffffff"}
                         fillOpacity=${0.9}
                         fontWeight="bold"
                         font=${lang === 'fa' ? FA_FONT_URL : undefined}
@@ -513,29 +536,29 @@
             `;
         };
 
-        const IdeologyLabels = ({ visible, config, lang }) => {
+        const IdeologyLabels = ({ visible, config, lang, theme }) => {
             if (!visible) return null;
             const items = [
-                { text: UI_TEXT.libertarian[lang], pos: [8, 8, 8], color: "#b45309", req: ['z'] },
-                { text: UI_TEXT.authLeft[lang], pos: [-8, -5, -8], color: "#b91c1c", req: ['z', 'x'] },
-                { text: UI_TEXT.socDem[lang], pos: [-5, 5, 8], color: "#15803d", req: ['x', 'z'] },
-                { text: UI_TEXT.trad[lang], pos: [0, -9, 0], color: "#be185d", req: ['y'] },
-                { text: UI_TEXT.theo[lang], pos: [0, -9, -8], color: "#7e22ce", req: ['y', 'z'] },
-                { text: UI_TEXT.prog[lang], pos: [0, 9, 0], color: "#0f766e", req: ['y'] },
-                { text: UI_TEXT.fascism[lang], pos: [0, 8, -9], color: "#7f1d1d", req: ['z'] },
-                { text: UI_TEXT.libDem[lang], pos: [5, 0, 8], color: "#1d4ed8", req: ['z'] }
+                { text: UI_TEXT.libertarian[lang], pos: [8, 8, 8], color: theme === 'dark' ? "#fbbf24" : "#b45309", req: ['z'] },
+                { text: UI_TEXT.authLeft[lang], pos: [-8, -5, -8], color: theme === 'dark' ? "#f87171" : "#b91c1c", req: ['z', 'x'] },
+                { text: UI_TEXT.socDem[lang], pos: [-5, 5, 8], color: theme === 'dark' ? "#4ade80" : "#15803d", req: ['x', 'z'] },
+                { text: UI_TEXT.trad[lang], pos: [0, -9, 0], color: theme === 'dark' ? "#f472b6" : "#be185d", req: ['y'] },
+                { text: UI_TEXT.theo[lang], pos: [0, -9, -8], color: theme === 'dark' ? "#a855f7" : "#7e22ce", req: ['y', 'z'] },
+                { text: UI_TEXT.prog[lang], pos: [0, 9, 0], color: theme === 'dark' ? "#2dd4bf" : "#0f766e", req: ['y'] },
+                { text: UI_TEXT.fascism[lang], pos: [0, 8, -9], color: theme === 'dark' ? "#7f1d1d" : "#7f1d1d", req: ['z'] },
+                { text: UI_TEXT.libDem[lang], pos: [5, 0, 8], color: theme === 'dark' ? "#3b82f6" : "#1d4ed8", req: ['z'] }
             ];
             return html`
                 <group>
                     ${items.map((l, i) => {
                 if (l.req && !l.req.every(a => config.axes[a])) return null;
-                return html`<${IdeologyLabelItem} key=${i} label=${l} config=${config} lang=${lang} />`;
+                return html`<${IdeologyLabelItem} key=${i} label=${l} config=${config} lang=${lang} theme=${theme} />`;
             })}
                 </group>
             `;
         };
 
-        const CountrySphere = ({ country, hovered, setHovered, showLabels, mapping, activeAxesCount, lang, config, staggerIndex }) => {
+        const CountrySphere = ({ country, hovered, setHovered, showLabels, mapping, activeAxesCount, lang, config, staggerIndex, theme }) => {
             const groupRef = useRef();
             const meshRef = useRef();
             const isHovered = hovered === country.name[lang];
@@ -578,14 +601,32 @@
                 lo = [0, 0.6, 0];
             }
 
+            const textColor = isFigure ? (theme === 'dark' ? "#fcd34d" : "#d97706") : (theme === 'dark' ? "white" : "#0f172a");
+            const outlineCol = theme === 'dark' ? "black" : "white";
+            const lineColor = theme === 'dark' ? "white" : "#94a3b8";
+            const lineOpacity = theme === 'dark' ? 0.3 : 0.5;
+
             return html`
                 <group ref=${groupRef}>
-                    <mesh ref=${meshRef} onPointerOver=${(e) => { e.stopPropagation(); setHovered(country.name[lang]); }} onPointerOut=${(e) => { e.stopPropagation(); setHovered(null); }}>
+                    <mesh ref=${meshRef} 
+                        onPointerOver=${(e) => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') setHovered(country.name[lang]);
+                }} 
+                        onPointerOut=${(e) => {
+                    e.stopPropagation();
+                    if (e.pointerType === 'mouse') setHovered(null);
+                }}
+                        onClick=${(e) => {
+                    e.stopPropagation();
+                    setHovered(country.name[lang]);
+                }}
+                    >
                         ${isFigure ? html`<boxGeometry args=${[0.6, 0.6, 0.6]} />` : html`<sphereGeometry args=${[0.3, 32, 32]} />`}
                         <meshPhysicalMaterial 
                             color=${isFigure ? "#f59e0b" : country.color} 
                             emissive=${isFigure ? "#f59e0b" : country.color} 
-                            emissiveIntensity=${isHovered ? 1.0 : 0.2}
+                            emissiveIntensity=${isHovered ? 1.0 : (theme === 'dark' ? 0.6 : 0.2)}
                             roughness=${0.4} 
                             metalness=${isFigure ? 0.8 : 0.1} 
                             clearcoat=${0.5}
@@ -595,18 +636,28 @@
                         <group>
                             ${showLine ? html`<mesh position=${[lo[0] / 2, lo[1] / 2, lo[2] / 2]}> 
                                 <boxGeometry args=${[0.02, Math.abs(lo[1]), 0.02]} />
-                                <meshBasicMaterial color="#94a3b8" transparent opacity=${0.5} />
+                                <meshBasicMaterial color=${lineColor} transparent opacity=${lineOpacity} />
                             </mesh>` : null}
                             
                             <${Billboard} position=${lo}> 
                                 <${Text} 
                                     fontSize=${0.5} 
-                                    color=${isFigure ? "#d97706" : "#0f172a"} 
+                                    color=${textColor} 
                                     outlineWidth=${0.04} 
-                                    outlineColor="white"
+                                    outlineColor=${outlineCol}
                                     fillOpacity=${isHovered ? 1 : 0.9}
-                                    onPointerOver=${(e) => { e.stopPropagation(); setHovered(country.name[lang]); }}
-                                    onPointerOut=${(e) => { e.stopPropagation(); setHovered(null); }}
+                                    onPointerOver=${(e) => {
+                        e.stopPropagation();
+                        if (e.pointerType === 'mouse') setHovered(country.name[lang]);
+                    }}
+                                    onPointerOut=${(e) => {
+                        e.stopPropagation();
+                        if (e.pointerType === 'mouse') setHovered(null);
+                    }}
+                                    onClick=${(e) => {
+                        e.stopPropagation();
+                        setHovered(country.name[lang]);
+                    }}
                                     font=${lang === 'fa' ? FA_FONT_URL : undefined}
                                 >
                                     ${country.name[lang]}
@@ -618,7 +669,7 @@
             `;
         };
 
-        const ScatterPlot = ({ setHovered, hovered, countries, mapping, config, lang }) => {
+        const ScatterPlot = ({ setHovered, hovered, countries, mapping, config, lang, theme }) => {
             const isX = config.axes.x && mapping.x !== 'none';
             const isY = config.axes.y && mapping.y !== 'none';
             const isZ = config.axes.z && mapping.z !== 'none';
@@ -648,30 +699,41 @@
                 return map;
             }, [visibleEntities, activeAxesCount, isX, isY, isZ, mapping]);
 
+            const inactiveAxisColor = theme === 'dark' ? "#94a3b8" : "#cbd5e1";
+
+            const gridXZColor = theme === 'dark' ? "#475569" : "#f1f5f9";
+            const gridXZLine = theme === 'dark' ? "#94a3b8" : "#cbd5e1";
+
+            const gridYZColor = theme === 'dark' ? "#312e81" : "#e2e8f0";
+            const gridYZLine = theme === 'dark' ? "#94a3b8" : "#cbd5e1";
+
+            const gridXYColor = theme === 'dark' ? "#115e59" : "#f8fafc";
+            const gridXYLine = theme === 'dark' ? "#94a3b8" : "#cbd5e1";
+
             return html`
                 <group>
-                    ${isGlobeMode ? html`<${EarthGlobe} lang=${lang} />` : null}
+                    ${isGlobeMode ? html`<${EarthGlobe} lang=${lang} theme=${theme} />` : null}
                     
                     ${!isGlobeMode ? html`
-                        <${Axis} visible=${isX} position=${[0, 0, 0]} size=${[22, 0.05, 0.05]} startLabel=${isX ? getM(mapping.x)?.startLabel?.[lang] : ""} endLabel=${isX ? getM(mapping.x)?.endLabel?.[lang] : ""} color=${isX ? getM(mapping.x)?.color.light : "#cbd5e1"} lang=${lang} />
-                        <${Axis} visible=${isY} position=${[0, 0, 0]} size=${[0.05, 22, 0.05]} startLabel=${isY ? getM(mapping.y)?.startLabel?.[lang] : ""} endLabel=${isY ? getM(mapping.y)?.endLabel?.[lang] : ""} color=${isY ? getM(mapping.y)?.color.light : "#cbd5e1"} lang=${lang} />
-                        <${Axis} visible=${isZ} position=${[0, 0, 0]} size=${[0.05, 0.05, 22]} startLabel=${isZ ? getM(mapping.z)?.startLabel?.[lang] : ""} endLabel=${isZ ? getM(mapping.z)?.endLabel?.[lang] : ""} color=${isZ ? getM(mapping.z)?.color.light : "#cbd5e1"} lang=${lang} />
+                        <${Axis} visible=${isX} position=${[0, 0, 0]} size=${[22, 0.05, 0.05]} startLabel=${isX ? getM(mapping.x)?.startLabel?.[lang] : ""} endLabel=${isX ? getM(mapping.x)?.endLabel?.[lang] : ""} color=${isX ? getM(mapping.x)?.color[theme] : inactiveAxisColor} lang=${lang} theme=${theme} />
+                        <${Axis} visible=${isY} position=${[0, 0, 0]} size=${[0.05, 22, 0.05]} startLabel=${isY ? getM(mapping.y)?.startLabel?.[lang] : ""} endLabel=${isY ? getM(mapping.y)?.endLabel?.[lang] : ""} color=${isY ? getM(mapping.y)?.color[theme] : inactiveAxisColor} lang=${lang} theme=${theme} />
+                        <${Axis} visible=${isZ} position=${[0, 0, 0]} size=${[0.05, 0.05, 22]} startLabel=${isZ ? getM(mapping.z)?.startLabel?.[lang] : ""} endLabel=${isZ ? getM(mapping.z)?.endLabel?.[lang] : ""} color=${isZ ? getM(mapping.z)?.color[theme] : inactiveAxisColor} lang=${lang} theme=${theme} />
 
-                        <${GridPlane} visible=${isX && isZ} position=${[0, -10, 0]} size=${22} rotation=${[0, 0, 0]} color="#f1f5f9" gridColor="#cbd5e1" />
-                        <${GridPlane} visible=${isY && isZ} position=${[-10, 0, 0]} size=${22} rotation=${[0, 0, Math.PI / 2]} color="#e2e8f0" gridColor="#cbd5e1" />
-                        <${GridPlane} visible=${isX && isY} position=${[0, 0, -10]} size=${22} rotation=${[Math.PI / 2, 0, 0]} color="#f8fafc" gridColor="#cbd5e1" />
-                        <${IdeologyLabels} visible=${config.showIdeologies} config=${config} lang=${lang} />
+                        <${GridPlane} visible=${isX && isZ} position=${[0, -10, 0]} size=${22} rotation=${[0, 0, 0]} color=${gridXZColor} gridColor=${gridXZLine} theme=${theme} />
+                        <${GridPlane} visible=${isY && isZ} position=${[-10, 0, 0]} size=${22} rotation=${[0, 0, Math.PI / 2]} color=${gridYZColor} gridColor=${gridYZLine} theme=${theme} />
+                        <${GridPlane} visible=${isX && isY} position=${[0, 0, -10]} size=${22} rotation=${[Math.PI / 2, 0, 0]} color=${gridXYColor} gridColor=${gridXYLine} theme=${theme} />
+                        <${IdeologyLabels} visible=${config.showIdeologies} config=${config} lang=${lang} theme=${theme} />
                     ` : null}
 
                     ${visibleEntities.map((c, i) => {
                 const staggerIndex = staggerMap ? staggerMap[c.code] : c.index;
-                return html`<${CountrySphere} key=${c.code} country=${c} hovered=${hovered} setHovered=${setHovered} showLabels=${config.showLabels} config=${config} mapping=${mapping} activeAxesCount=${activeAxesCount} lang=${lang} staggerIndex=${staggerIndex} />`
+                return html`<${CountrySphere} key=${c.code} country=${c} hovered=${hovered} setHovered=${setHovered} showLabels=${config.showLabels} config=${config} mapping=${mapping} activeAxesCount=${activeAxesCount} lang=${lang} staggerIndex=${staggerIndex} theme=${theme} />`
             })}
                 </group>
             `;
         };
 
-        const TopControls = ({ config, setConfig, view, setView, mapping, setMapping, lang, setLang }) => {
+        const TopControls = ({ config, setConfig, view, setView, mapping, setMapping, lang, setLang, theme, setTheme }) => {
             const toggle = (key) => setConfig(prev => ({ ...prev, [key]: !prev[key] }));
             const setViewMode = (mode) => setView({ mode });
             const [isExpanded, setIsExpanded] = useState(false);
@@ -694,14 +756,14 @@
                 <div className="flex flex-col mb-2">
                     <div className="flex justify-between items-center mb-1">
                          <span className="text-[10px] font-bold text-slate-400 uppercase">${UI_TEXT[`axis${axis.toUpperCase()}`][lang]}</span>
-                         <button onClick=${() => toggleAxis(axis)} className="text-xs hover:text-slate-600 text-slate-400">
+                         <button onClick=${() => toggleAxis(axis)} className=${`text-xs hover:text-${theme === 'dark' ? 'white' : 'slate-600'} text-slate-400`}>
                              ${config.axes[axis] ? html`<${Icons.Eye} size=${12} />` : html`<${Icons.EyeOff} size=${12} />`}
                          </button>
                     </div>
                     <select 
                         value=${value}
                         onChange=${(e) => setMapping(prev => ({ ...prev, [axis]: e.target.value }))}
-                        className="text-xs p-1 rounded border focus:border-blue-500 outline-none bg-slate-50 text-slate-700 border-slate-200"
+                        className=${`text-xs p-1 rounded border focus:border-blue-500 outline-none ${theme === 'dark' ? 'bg-slate-800 text-white border-slate-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`}
                         disabled=${!config.axes[axis]}
                     >
                         <option value="none">${UI_TEXT.none[lang]}</option>
@@ -710,35 +772,44 @@
                 </div>
             `;
 
+            const bgClass = theme === 'dark' ? 'bg-slate-900/90 border-slate-700 text-slate-300' : 'bg-white/90 border-slate-200 text-slate-700';
+            const btnClass = theme === 'dark' ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+            const iconColor = theme === 'dark' ? 'hover:text-white' : 'hover:text-blue-600';
+            const titleColor = theme === 'dark' ? 'text-white' : 'text-slate-800';
+            const presetBtnClass = theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
+
             return html`
                 <div className=${`absolute top-6 ${lang === 'fa' ? 'left-6 flex-row-reverse' : 'right-6 flex-row'} z-50 flex items-start gap-2 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
                     
-                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className="bg-white text-slate-700 rounded-lg border border-slate-200 hover:bg-slate-50 w-12 h-12 flex flex-col items-center justify-center shadow-xl font-bold text-xs shrink-0 transition-transform active:scale-95">
+                    <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`rounded-lg border w-12 h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
+                        ${theme === 'dark' ? html`<${Icons.Sun} size=${16} className="mb-1"/> Light` : html`<${Icons.Moon} size=${16} className="mb-1"/> Dark`}
+                    </button>
+
+                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className=${`rounded-lg border w-12 h-12 flex flex-col items-center justify-center shadow-xl font-bold text-xs shrink-0 transition-transform active:scale-95 ${btnClass}`}>
                         <${Icons.Lang} size=${16} className="mb-1"/>${lang === 'en' ? 'FA' : 'EN'}
                     </button>
                     
-                    <div className="bg-white/90 text-slate-700 rounded-xl border border-slate-200 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out font-fa" style=${{ width: isExpanded ? '18rem' : '3rem', height: isExpanded ? 'auto' : '3rem', maxHeight: isExpanded ? '600px' : '3rem' }} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)}>
-                        ${!isExpanded
-                    ? html`<div className="w-full h-full flex items-center justify-center cursor-pointer transition-colors hover:text-blue-600"><${Icons.Settings} size=${24} /></div>`
-                    : html`
+                    <div className=${`${bgClass} rounded-xl backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out font-fa`} style=${{ width: isExpanded ? '18rem' : '3rem', height: isExpanded ? 'auto' : '3rem', maxHeight: isExpanded ? '600px' : '3rem' }} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)}>
+                        ${!isExpanded && html`<div className=${`w-full h-full flex items-center justify-center cursor-pointer transition-colors ${iconColor}`}><${Icons.Settings} size=${24} /></div>`}
+                        ${isExpanded && html`
                             <div className="p-4 opacity-0 animate-fadeIn">
-                                <h3 className="text-slate-800 font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400"><${Icons.Layout} size=${14} /> ${UI_TEXT.viewControls[lang]}</h3>
+                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400`}><${Icons.Layout} size=${14} /> ${UI_TEXT.viewControls[lang]}</h3>
                                 <div className="grid grid-cols-4 gap-2 mb-4">
-                                    <button onClick=${() => setViewMode('default')} className="p-1 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700">${UI_TEXT.iso[lang]}</button>
-                                    <button onClick=${() => setViewMode('front')} className="p-1 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700">${UI_TEXT.front[lang]}</button>
-                                    <button onClick=${() => setViewMode('right')} className="p-1 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700">${UI_TEXT.right[lang]}</button>
-                                    <button onClick=${() => setViewMode('top')} className="p-1 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700">${UI_TEXT.top[lang]}</button>
+                                    <button onClick=${() => setViewMode('default')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.iso[lang]}</button>
+                                    <button onClick=${() => setViewMode('front')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.front[lang]}</button>
+                                    <button onClick=${() => setViewMode('right')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.right[lang]}</button>
+                                    <button onClick=${() => setViewMode('top')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.top[lang]}</button>
                                 </div>
-                                <hr className="border-slate-100 mb-4"/>
-                                <h3 className="text-slate-800 font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400"><${Icons.Arrows} size=${14} /> ${UI_TEXT.dataMapping[lang]}</h3>
+                                <hr className=${theme === 'dark' ? 'border-slate-700 mb-4' : 'border-slate-100 mb-4'}/>
+                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400`}><${Icons.Arrows} size=${14} /> ${UI_TEXT.dataMapping[lang]}</h3>
                                 <${MetricSelect} axis="x" value=${mapping.x} />
                                 <${MetricSelect} axis="y" value=${mapping.y} />
                                 <${MetricSelect} axis="z" value=${mapping.z} />
-                                <hr className="border-slate-100 my-4"/>
+                                <hr className=${theme === 'dark' ? 'border-slate-700 my-4' : 'border-slate-100 my-4'}/>
                                 <div className="space-y-2">
-                                    <button onClick=${() => toggle('showLabels')} className="w-full flex items-center justify-between text-xs transition-colors hover:text-blue-600"><span>${UI_TEXT.countryNames[lang]}</span>${config.showLabels ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}</button>
-                                    <button onClick=${() => toggle('showIdeologies')} className="w-full flex items-center justify-between text-xs transition-colors hover:text-blue-600"><span>${UI_TEXT.polLabels[lang]}</span>${config.showIdeologies ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}</button>
-                                    <button onClick=${() => toggle('showFigures')} className="w-full flex items-center justify-between text-xs transition-colors hover:text-blue-600"><span>${UI_TEXT.polFigures[lang]}</span><div className="flex items-center gap-2">${config.showFigures ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}<${Icons.User} size=${12} className="text-amber-500"/></div></button>
+                                    <button onClick=${() => toggle('showLabels')} className=${`w-full flex items-center justify-between text-xs transition-colors ${iconColor}`}><span>${UI_TEXT.countryNames[lang]}</span>${config.showLabels ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}</button>
+                                    <button onClick=${() => toggle('showIdeologies')} className=${`w-full flex items-center justify-between text-xs transition-colors ${iconColor}`}><span>${UI_TEXT.polLabels[lang]}</span>${config.showIdeologies ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}</button>
+                                    <button onClick=${() => toggle('showFigures')} className=${`w-full flex items-center justify-between text-xs transition-colors ${iconColor}`}><span>${UI_TEXT.polFigures[lang]}</span><div className="flex items-center gap-2">${config.showFigures ? html`<${Icons.Eye} size=${14} className="text-emerald-500"/>` : html`<${Icons.EyeOff} size=${14}/>`}<${Icons.User} size=${12} className="text-amber-500"/></div></button>
                                 </div>
                             </div>
                         `}
@@ -747,38 +818,48 @@
             `;
         };
 
-        const Overlay = ({ hoveredCountry, countries, config, setConfig, setView, mapping, setMapping, lang, setLang, tourStep, setTourStep, setShowWelcome }) => {
+        const Overlay = ({ hoveredCountry, countries, config, setConfig, setView, mapping, setMapping, lang, setLang, theme, setTheme, tourStep, setTourStep, setShowWelcome }) => {
             const data = countries.find(c => c.name[lang] === hoveredCountry);
             const [showAbout, setShowAbout] = useState(false);
+
+            const cardBg = theme === 'dark' ? 'bg-slate-900/90 text-white border-slate-700' : 'bg-white/90 text-slate-800 border-slate-200';
+            const dataCardBg = theme === 'dark' ? 'bg-slate-900/95 text-white border-slate-700' : 'bg-white/95 text-slate-800 border-slate-200';
+            const textMuted = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+            const textDesc = theme === 'dark' ? 'text-slate-300 border-slate-700' : 'text-slate-600 border-slate-300';
+            const metricBg = theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-100';
+            const metricBarBg = theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200';
+            const hrBorder = theme === 'dark' ? 'border-slate-800' : 'border-slate-100';
 
             return html`
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-4 flex flex-col justify-between z-10" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-start pointer-events-auto w-full">
-                        <div className="bg-white/90 text-slate-800 p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-slate-200 max-w-sm hidden md:block font-fa">
+                        <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block font-fa`}>
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">${UI_TEXT.title[lang]}</h1>
-                            <div className="flex items-center gap-2 text-xs mb-2 text-slate-500"><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
+                            <div className=${`flex items-center gap-2 text-xs mb-2 ${textMuted}`}><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
                             <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
                         </div>
-                        <div className="md:hidden bg-white/80 text-slate-800 p-3 rounded-xl border border-slate-200 backdrop-blur-sm absolute top-4 left-4 font-fa pointer-events-auto"><h1 className="text-sm font-bold text-blue-600">Data Explorer</h1></div>
+                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} font-fa pointer-events-auto`}>
+                            <h1 className="text-sm font-bold text-blue-600">${UI_TEXT.title[lang]}</h1>
+                        </div>
                         
-                        ${tourStep === -1 ? html`<${TopControls} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} />` : null}
+                        ${tourStep === -1 ? html`<${TopControls} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} />` : null}
                     </div>
 
                     ${showAbout ? html`
-                        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto font-fa bg-black/30" onClick=${() => setShowAbout(false)}>
-                             <div className="bg-white border-slate-200 border p-6 rounded-2xl shadow-2xl max-w-md m-4 relative w-full" onClick=${e => e.stopPropagation()}>
-                                <button onClick=${() => setShowAbout(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-800"><${Icons.X} size=${20}/></button>
-                                <h2 className="text-xl font-bold mb-4 text-slate-800">${UI_TEXT.aboutMe[lang]}</h2>
-                                <p className="text-sm leading-relaxed mb-6 text-slate-600">${UI_TEXT.aboutText[lang]}</p>
+                        <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto font-fa ${theme === 'dark' ? 'bg-black/60' : 'bg-black/30'}`} onClick=${() => setShowAbout(false)}>
+                             <div className=${`${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'} border p-6 rounded-2xl shadow-2xl max-w-md m-4 relative w-full`} onClick=${e => e.stopPropagation()}>
+                                <button onClick=${() => setShowAbout(false)} className=${`absolute top-4 right-4 ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-800'}`}><${Icons.X} size=${20}/></button>
+                                <h2 className=${`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>${UI_TEXT.aboutMe[lang]}</h2>
+                                <p className=${`text-sm leading-relaxed mb-6 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>${UI_TEXT.aboutText[lang]}</p>
                                 <div className="flex justify-center gap-6 mb-6">
                                     <a href="https://www.linkedin.com/in/alinoorani1/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-colors"><${Icons.Linkedin} size=${24} /></a>
                                     <a href="https://noorani.work/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-emerald-500 transition-colors"><${Icons.Globe} size=${24} /></a>
-                                    <a href="https://x.com/ali_noorani_teh" target="_blank" rel="noopener noreferrer" className="text-slate-400 transition-colors hover:text-slate-800"><${Icons.Twitter} size=${24} /></a>
+                                    <a href="https://x.com/ali_noorani_teh" target="_blank" rel="noopener noreferrer" className=${`text-slate-400 transition-colors ${theme === 'dark' ? 'hover:text-white' : 'hover:text-slate-800'}`}><${Icons.Twitter} size=${24} /></a>
                                     <a href="https://instagram.com/alirecommends" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#E1306C] transition-colors"><${Icons.Instagram} size=${24} /></a>
                                 </div>
-                                <hr className="my-4 border-slate-100" />
+                                <hr className=${`my-4 ${hrBorder}`} />
                                 <div className="text-center">
-                                    <p className="text-xs mb-3 text-slate-500">${UI_TEXT.support[lang]}</p>
+                                    <p className=${`text-xs mb-3 ${textMuted}`}>${UI_TEXT.support[lang]}</p>
                                     <a href="https://ko-fi.com/N4N61QZPXB" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#72a4f2] hover:bg-[#5b8ddb] text-white px-4 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg mx-auto"><${Icons.Coffee} size=${18} fill="currentColor" /><span>${UI_TEXT.buyCoffee[lang]}</span></a>
                                 </div>
                             </div>
@@ -787,18 +868,18 @@
 
                     ${data ? html`
                         <div className=${`absolute ${lang === 'fa' ? 'md:left-6' : 'md:right-6'} md:top-24 md:w-80 md:h-auto bottom-0 left-0 w-full md:bottom-auto pointer-events-auto max-h-[50vh] md:max-h-[80vh] overflow-y-auto scrollbar-hide p-4 md:p-0 font-fa`}>
-                             <div className="bg-white/95 text-slate-800 border-slate-200 p-6 rounded-xl shadow-2xl border-t-4 md:border-t-0 md:border-l-4 border-blue-500 backdrop-blur-md transition-all duration-300">
+                             <div className=${`${dataCardBg} p-6 rounded-xl shadow-2xl border-t-4 md:border-t-0 md:border-l-4 border-blue-500 backdrop-blur-md transition-all duration-300`}>
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <h2 className="text-2xl font-bold mb-1 flex items-center gap-2">${data.name[lang]}${data.type === 'figure' ? html`<${Icons.User} size=${20} className="text-amber-500" />` : null}</h2>
-                                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-500">${(data.region && data.region[lang]) || (lang === 'fa' ? "چهره تاریخی" : "Historical Figure")}</span>
+                                        <span className=${`text-xs uppercase tracking-wider font-semibold ${textMuted}`}>${(data.region && data.region[lang]) || (lang === 'fa' ? "چهره تاریخی" : "Historical Figure")}</span>
                                     </div>
                                 </div>
-                                <p className="text-sm mt-4 mb-4 leading-relaxed border-l-2 pl-3 italic text-slate-600 border-slate-300">${data.desc[lang]}</p>
+                                <p className=${`text-sm mt-4 mb-4 leading-relaxed border-l-2 pl-3 italic ${textDesc}`}>${data.desc[lang]}</p>
                                 ${data.note ? html`<div className="mb-4 bg-indigo-50 border border-indigo-200 rounded p-2"><p className="text-xs text-indigo-800"><span className="font-bold text-indigo-600">${UI_TEXT.note[lang]}</span> ${data.note[lang]}</p></div>` : null}
                                 
                                 <div className="space-y-3 mb-6">
-                                    <div className="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500">${UI_TEXT.selectedMetrics[lang]}</div>
+                                    <div className=${`text-xs font-bold uppercase tracking-wider mb-2 ${textMuted}`}>${UI_TEXT.selectedMetrics[lang]}</div>
                                     ${['x', 'y', 'z'].map(axis => {
                 if (!config.axes[axis] || mapping[axis] === 'none') return null;
                 const mKey = mapping[axis];
@@ -806,27 +887,27 @@
                 const val = data.metrics[mKey];
                 const pct = ((val - mConfig.min) / (mConfig.max - mConfig.min)) * 100;
                 return html`
-                                            <div key=${axis} className="bg-slate-50 border-slate-100 p-2 rounded border">
+                                            <div key=${axis} className=${`${metricBg} p-2 rounded border`}>
                                                 <div className="flex justify-between text-xs mb-1">
-                                                    <span className="text-slate-500">${mConfig.label[lang]} (${axis.toUpperCase()})</span>
-                                                    <span className="font-bold" style=${{ color: mConfig.color.light }}>${val}</span>
+                                                    <span className=${textMuted}>${mConfig.label[lang]} (${axis.toUpperCase()})</span>
+                                                    <span className="font-bold" style=${{ color: mConfig.color[theme] }}>${val}</span>
                                                 </div>
-                                                <div className="w-full h-1.5 rounded-full overflow-hidden bg-slate-200">
-                                                    <div className="h-full" style=${{ width: `${pct}%`, backgroundColor: mConfig.color.light }}></div>
+                                                <div className=${`w-full h-1.5 rounded-full overflow-hidden ${metricBarBg}`}>
+                                                    <div className="h-full" style=${{ width: `${pct}%`, backgroundColor: mConfig.color[theme] }}></div>
                                                 </div>
                                             </div>
                                         `;
             })}
                                 </div>
-                                <hr className="my-4 border-slate-100" />
-                                <div className="text-xs font-bold uppercase tracking-wider mb-4 text-slate-500">${UI_TEXT.countryProfile[lang]}</div>
+                                <hr className=${`my-4 ${hrBorder}`} />
+                                <div className=${`text-xs font-bold uppercase tracking-wider mb-4 ${textMuted}`}>${UI_TEXT.countryProfile[lang]}</div>
                                 <div className="space-y-4">
-                                    ${data.type !== 'figure' ? html`<div><div className="flex justify-between mb-1"><span className="text-xs uppercase text-slate-500">${UI_TEXT.hdi[lang]}</span><span className="font-mono text-emerald-600 font-bold">${data.hdi}</span></div><div className="w-full h-1.5 rounded-full overflow-hidden bg-slate-200"><div className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500" style=${{ width: `${data.hdi * 100}%` }}></div></div></div>` : null}
-                                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                                        <div className="bg-slate-50 border-slate-100 p-2 rounded border"><div className="text-xs mb-1 text-slate-500">${UI_TEXT.democracy[lang]}</div><div className="font-bold text-lg text-green-600">${data.metrics?.auth}</div><div className="text-[10px] leading-tight mt-1 text-slate-500">${getAuthLabel(data.metrics?.auth, lang)}</div></div>
-                                        <div className="bg-slate-50 border-slate-100 p-2 rounded border"><div className="text-xs mb-1 text-slate-500">${UI_TEXT.economic[lang]}</div><div className="font-bold text-lg text-blue-600">${data.metrics?.econ}</div><div className="text-[10px] leading-tight mt-1 text-slate-500">${getEconLabel(data.metrics?.econ, lang)}</div></div>
+                                    ${data.type !== 'figure' ? html`<div><div className="flex justify-between mb-1"><span className=${`text-xs uppercase ${textMuted}`}>${UI_TEXT.hdi[lang]}</span><span className="font-mono text-emerald-600 font-bold">${data.hdi}</span></div><div className=${`w-full h-1.5 rounded-full overflow-hidden ${metricBarBg}`}><div className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500" style=${{ width: `${data.hdi * 100}%` }}></div></div></div>` : null}
+                                    <div className=${`grid grid-cols-2 gap-4 pt-2 border-t ${hrBorder}`}>
+                                        <div className=${`${metricBg} p-2 rounded border`}><div className=${`text-xs mb-1 ${textMuted}`}>${UI_TEXT.democracy[lang]}</div><div className="font-bold text-lg text-green-600">${data.metrics?.auth}</div><div className=${`text-[10px] leading-tight mt-1 ${textMuted}`}>${getAuthLabel(data.metrics?.auth, lang)}</div></div>
+                                        <div className=${`${metricBg} p-2 rounded border`}><div className=${`text-xs mb-1 ${textMuted}`}>${UI_TEXT.economic[lang]}</div><div className="font-bold text-lg text-blue-600">${data.metrics?.econ}</div><div className=${`text-[10px] leading-tight mt-1 ${textMuted}`}>${getEconLabel(data.metrics?.econ, lang)}</div></div>
                                     </div>
-                                    <div className="bg-slate-50 border-slate-100 p-2 rounded border"><div className="text-xs mb-1 text-slate-500">${UI_TEXT.cultural[lang]}</div><div className="flex justify-between text-xs px-1 text-slate-500"><span>${UI_TEXT.trad[lang]}</span><span>${UI_TEXT.prog[lang]}</span></div><div className="w-full h-1 rounded-full mt-2 relative mb-2 bg-slate-200"><div className="absolute w-2 h-2 bg-pink-500 rounded-full top-1/2 transform -translate-y-1/2 shadow" style=${{ [lang === 'fa' ? 'right' : 'left']: `${((data.metrics?.cult + 2.5) / 5) * 100}%` }}></div></div></div>
+                                    <div className=${`${metricBg} p-2 rounded border`}><div className=${`text-xs mb-1 ${textMuted}`}>${UI_TEXT.cultural[lang]}</div><div className=${`flex justify-between text-xs px-1 ${textMuted}`}><span>${UI_TEXT.trad[lang]}</span><span>${UI_TEXT.prog[lang]}</span></div><div className=${`w-full h-1 rounded-full mt-2 relative mb-2 ${metricBarBg}`}><div className="absolute w-2 h-2 bg-pink-500 rounded-full top-1/2 transform -translate-y-1/2 shadow" style=${{ [lang === 'fa' ? 'right' : 'left']: `${((data.metrics?.cult + 2.5) / 5) * 100}%` }}></div></div></div>
                                 </div>
                              </div>
                         </div>
@@ -839,6 +920,7 @@
             const [hovered, setHovered] = useState(null);
             const [view, setView] = useState({ mode: 'default' });
             const [lang, setLang] = useState('en');
+            const [theme, setTheme] = useState('dark');
 
             const [config, setConfig] = useState({ axes: { x: true, y: true, z: true }, showLabels: true, showIdeologies: false, showFigures: false });
             const [mapping, setMapping] = useState({ x: 'econ', y: 'cult', z: 'auth' });
@@ -880,28 +962,33 @@
                         ...c,
                         index: i,
                         pos: pos,
-                        color: c.type === 'figure' ? '#f59e0b' : ((c.hdi < 0.7) ? new THREE.Color('#ef4444').lerp(new THREE.Color('#eab308'), (c.hdi - 0.5) * 2) : new THREE.Color('#eab308').lerp(new THREE.Color('#16a34a'), (c.hdi - 0.7) * 3.3)),
+                        color: c.type === 'figure' ? '#f59e0b' : ((c.hdi < 0.7) ? new THREE.Color('#ef4444').lerp(new THREE.Color('#eab308'), (c.hdi - 0.5) * 2) : new THREE.Color('#eab308').lerp(new THREE.Color(theme === 'dark' ? '#22c55e' : '#16a34a'), (c.hdi - 0.7) * 3.3)),
                         rankGlobal: rankGlobal,
                         rankEcon: rankGlobal
                     };
                 });
                 return combined;
-            }, []);
+            }, [theme]);
 
             return html`
-                <div className=${`w-full h-full relative font-sans transition-colors duration-500 ${lang === 'fa' ? 'font-fa' : ''} bg-[#f1f5f9]`}>
-                    ${showWelcome ? html`<${WelcomeModal} startTour=${() => { setShowWelcome(false); setTourStep(0); }} close=${() => setShowWelcome(false)} lang=${lang} />` : null}
-                    ${tourStep > -1 ? html`<${TourControls} step=${tourStep} next=${() => tourStep < TOUR_STEPS.length - 1 ? setTourStep(s => s + 1) : setTourStep(-1)} prev=${() => setTourStep(s => s - 1)} skip=${() => setTourStep(-1)} lang=${lang} />` : null}
-                    <${Overlay} hoveredCountry=${hovered} countries=${countries} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} tourStep=${tourStep} setTourStep=${setTourStep} />
-                    <${Canvas} camera=${{ position: [20, 15, 20], fov: 45 }}>
-                        <color attach="background" args=${['#f1f5f9']} />
-                        <fog attach="fog" args=${['#f1f5f9', 80, 200]} />
+                <div className=${`w-full h-full relative font-sans transition-colors duration-500 ${lang === 'fa' ? 'font-fa' : ''} ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#f1f5f9]'}`}>
+                    ${showWelcome ? html`<${WelcomeModal} startTour=${() => { setShowWelcome(false); setTourStep(0); }} close=${() => setShowWelcome(false)} lang=${lang} theme=${theme} />` : null}
+                    ${tourStep > -1 ? html`<${TourControls} step=${tourStep} next=${() => tourStep < TOUR_STEPS.length - 1 ? setTourStep(s => s + 1) : setTourStep(-1)} prev=${() => setTourStep(s => s - 1)} skip=${() => setTourStep(-1)} lang=${lang} theme=${theme} />` : null}
+                    <${Overlay} hoveredCountry=${hovered} countries=${countries} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} tourStep=${tourStep} setTourStep=${setTourStep} setShowWelcome=${setShowWelcome} />
+                    
+                    <${Canvas} 
+                        camera=${{ position: [20, 15, 20], fov: 45 }}
+                        onPointerMissed=${() => setHovered(null)} 
+                    >
+                        <color attach="background" args=${[theme === 'dark' ? '#0f172a' : '#f1f5f9']} />
+                        <fog attach="fog" args=${[theme === 'dark' ? '#0f172a' : '#f1f5f9', 80, 200]} />
                         <${CameraController} view=${view} />
-                        <ambientLight intensity=${1.5} />
+                        <ambientLight intensity=${theme === 'dark' ? 0.8 : 1.5} />
                         <pointLight position=${[10, 10, 10]} intensity=${1} />
                         <pointLight position=${[-10, -10, -10]} intensity=${0.5} color="#3b82f6" />
+                        ${theme === 'dark' ? html`<${Stars} radius=${100} depth=${50} count=${5000} factor=${4} saturation=${0} fade speed=${1} />` : null}
                         <group position=${[0, 0, 0]}>
-                            <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${countries} config=${config} mapping=${mapping} lang=${lang} />
+                            <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${countries} config=${config} mapping=${mapping} lang=${lang} theme=${theme} />
                         </group>
                         <${OrbitControls} enablePan=${true} enableZoom=${true} minDistance=${5} maxDistance=${100} autoRotate=${false} />
                     </${Canvas}>
