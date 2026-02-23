@@ -5,7 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Data Explorer 3D</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config for Custom Dana Font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        dana: ['Dana', 'Tahoma', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         /* LIGHT MODE BACKGROUND */
         body,
@@ -32,43 +48,37 @@
             scrollbar-width: none;
         }
 
-        /* Font for Persian HTML Overlay */
+        /* Custom Font Mappings */
         @font-face {
             font-family: 'Dana';
             src: url('./Dana_fonts/Dana-Regular.ttf') format('truetype');
             font-weight: 400;
-            /* Maps to normal text */
             font-style: normal;
+            font-display: swap;
         }
 
         @font-face {
             font-family: 'Dana';
             src: url('./Dana_fonts/Dana-Medium.ttf') format('truetype');
             font-weight: 500;
-            /* Maps to font-medium */
             font-style: normal;
+            font-display: swap;
         }
 
         @font-face {
             font-family: 'Dana';
             src: url('./Dana_fonts/Dana-DemiBold.ttf') format('truetype');
             font-weight: 600;
-            /* Maps to font-semibold */
             font-style: normal;
+            font-display: swap;
         }
 
         @font-face {
             font-family: 'Dana';
             src: url('./Dana_fonts/Dana-Bold.ttf') format('truetype');
             font-weight: 700;
-            /* Maps to font-bold */
             font-style: normal;
-        }
-
-        /* The !important flag combined with * ensures Tailwind does not override this font on buttons/inputs */
-        .font-fa,
-        .font-fa * {
-            font-family: 'Dana', sans-serif !important;
+            font-display: swap;
         }
 
         @keyframes pulse-ring {
@@ -77,7 +87,6 @@
                 box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
             }
 
-            /* Blue-600 */
             70% {
                 transform: scale(1);
                 box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
@@ -127,7 +136,7 @@
     <div id="root"></div>
 
     <script type="module">
-        import React, { useState, useMemo, useRef, useEffect, createElement } from 'react';
+        import React, { useState, useMemo, useRef, useEffect, createElement, Suspense } from 'react';
         import { createRoot } from 'react-dom/client';
         import * as THREE from 'three';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
@@ -136,7 +145,7 @@
 
         const html = htm.bind(createElement);
 
-        // --- ICONS (Robust inline syntax for native parser compatibility) ---
+        // --- ICONS ---
         const Icons = {
             Info: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
             Settings: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
@@ -160,7 +169,10 @@
             Moon: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
         };
 
-        const FA_FONT_URL = "./Dana_fonts/Dana-Regular.ttf";
+        // --- 3D FONT URL ---
+        // Vazirmatn is strictly used here because highly custom variable/hinted TTFs (like Dana) 
+        // can occasionally crash the Typr.js parser inside troika-three-text, causing a blank map.
+        const FA_FONT_URL = "https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Regular.ttf";
 
         // --- CONFIG ---
         const METRICS_CONFIG = {
@@ -198,6 +210,10 @@
             countryProfile: { en: "Country Profile", fa: "نمایه کشور" },
             aboutMe: { en: "About Me", fa: "درباره من" },
             aboutText: { en: "I am a Product Designer and data visualization enthusiast exploring the intersection of politics, economics, and culture through interactive 3D web technologies.", fa: "من طراح محصول و علاقه‌مند به تصویرسازی داده‌ها هستم که تقاطع سیاست، اقتصاد و فرهنگ را از طریق فناوری‌های وب سه‌بعدی تعاملی کاوش می‌کنم." },
+            welcomeText: {
+                en: "Unlike traditional 2D charts, this interactive map visualizes nations across multiple dimensions. Explore the intricate relationships between Economic Freedom, Cultural Values, and Governance.",
+                fa: "برخلاف نمودارهای سنتی دوبعدی، این نقشه تعاملی کشورها را در ابعاد مختلف تجسم می‌کند. روابط پیچیده بین آزادی اقتصادی، ارزش‌های فرهنگی و حکمرانی را کاوش کنید."
+            },
             support: { en: "Support this project:", fa: "حمایت از این پروژه:" },
             buyCoffee: { en: "Buy Me a Coffee", fa: "یک قهوه مهمانم کن" },
             dataMapping: { en: "Data Mapping", fa: "نگاشت داده‌ها" },
@@ -236,7 +252,6 @@
             endTour: { en: "End Tour", fa: "پایان تور" }
         };
 
-        // --- DATA ---
         const RAW_DATA = [
             { name: { en: "United States", fa: "ایالات متحده" }, code: "US", metrics: { econ: 70.2, auth: 7.85, cult: 0.2, women: 0.82, edu: 0.90, stability: 65, effectiveness: 88, regulatory: 91, rule_law: 85, corruption: 83, health: 85, hdi: 0.927 }, hdi: 0.927, region: { en: "West", fa: "غرب" }, desc: { en: "Characterized by strong free-market principles and democratic institutions, though facing polarization.", fa: "با اصول بازار آزاد قوی و نهادهای دموکراتیک مشخص می‌شود، اگرچه با قطبی‌سازی روبروست." } },
             { name: { en: "Sweden", fa: "سوئد" }, code: "SE", metrics: { econ: 77.5, auth: 9.39, cult: 2.2, women: 0.95, edu: 0.94, stability: 92, effectiveness: 98, regulatory: 96, rule_law: 97, corruption: 95, health: 96, hdi: 0.947 }, hdi: 0.947, region: { en: "Scandinavia", fa: "اسکاندیناوی" }, desc: { en: "A model of 'Nordic Capitalism' combining high economic freedom with a robust welfare state.", fa: "مدلی از «سرمایه‌داری نوردیک» که آزادی اقتصادی بالا را با دولت رفاه قوی ترکیب می‌کند." }, note: { en: "High taxes fund extensive welfare despite free-market rating.", fa: "مالیات‌های بالا با وجود رتبه بازار آزاد، رفاه گسترده را تأمین می‌کند." } },
@@ -324,7 +339,7 @@
                 title: { en: "The Nordic Model", fa: "مدل نوردیک" },
                 text: {
                     en: "Bringing it all together: Nordic countries are often misunderstood. They are high on Economic Freedom (Right) and Democracy (Front), but fund welfare through taxes. They are distinct from the Authoritarian Left.",
-                    fa: "ترکیب همه ابعاد: کشورهای نوردیک Pillar اشتباه درک می‌شوند. آن‌ها در آزادی اقتصادی (راست) و دموکراسی (جلو) بالا هستند، اما رفاه را از طریق مالیات تأمین می‌کنند. آن‌ها از چپ اقتدارگرا متمایز هستند."
+                    fa: "ترکیب همه ابعاد: کشورهای نوردیک اغلب اشتباه درک می‌شوند. آن‌ها در آزادی اقتصادی (راست) و دموکراسی (جلو) بالا هستند، اما رفاه را از طریق مالیات تأمین می‌کنند. آن‌ها از چپ اقتدارگرا متمایز هستند."
                 },
                 view: 'default',
                 config: { axes: { x: true, y: true, z: true }, showLabels: true, showIdeologies: true, showFigures: false },
@@ -366,19 +381,26 @@
         };
 
         // --- COMPONENTS ---
-        const WelcomeModal = ({ startTour, close, lang, theme }) => {
+        const WelcomeModal = ({ startTour, close, lang, setLang, theme }) => {
             const bgClass = theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200';
             const textClass = theme === 'dark' ? 'text-white' : 'text-slate-800';
             const subtextClass = theme === 'dark' ? 'text-slate-300' : 'text-slate-600';
             const btnClass = theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100';
 
             return html`
-                <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-md z-50 p-4 font-fa ${theme === 'dark' ? 'bg-black/80' : 'bg-white/60'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
-                    <div className=${`${bgClass} border p-8 rounded-2xl shadow-2xl max-w-lg text-center`}>
-                        <h1 className=${`text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent`}>${UI_TEXT.title[lang]}</h1>
-                        <p className=${`${subtextClass} mb-8 leading-relaxed`}>${UI_TEXT.aboutText[lang]}</p>
-                        <div className="flex gap-4 justify-center">
-                            <button onClick=${startTour} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 animate-pulse-ring">
+                <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-md z-50 p-4 ${theme === 'dark' ? 'bg-black/80' : 'bg-white/60'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
+                    <div className=${`${bgClass} border p-6 md:p-8 rounded-2xl shadow-2xl max-w-lg text-center w-full`}>
+                        
+                        <div className="flex justify-center gap-4 mb-6">
+                            <button onClick=${() => setLang('en')} className=${`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${lang === 'en' ? 'bg-blue-600 text-white shadow-lg' : (theme === 'dark' ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 text-slate-600 hover:text-slate-800')}`}>English</button>
+                            <button onClick=${() => setLang('fa')} className=${`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${lang === 'fa' ? 'bg-blue-600 text-white shadow-lg' : (theme === 'dark' ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 text-slate-600 hover:text-slate-800')}`}>فارسی</button>
+                        </div>
+
+                        <h1 className=${`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent`}>${UI_TEXT.title[lang]}</h1>
+                        <p className=${`${subtextClass} mb-8 leading-relaxed text-sm md:text-base`}>${UI_TEXT.welcomeText[lang]}</p>
+                        
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                            <button onClick=${startTour} className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 animate-pulse-ring">
                                 <${Icons.Play} size=${20} fill="currentColor" /> ${UI_TEXT.startTour[lang]}
                             </button>
                             <button onClick=${close} className=${`px-6 py-3 rounded-xl font-bold transition-colors ${btnClass}`}>
@@ -398,7 +420,7 @@
             const prevBtnClass = theme === 'dark' ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-600';
 
             return html`
-                <div className=${`absolute bottom-8 left-1/2 -translate-x-1/2 ${bgClass} border p-6 rounded-2xl shadow-2xl z-50 w-full max-w-lg font-fa text-center`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
+                <div className=${`absolute bottom-8 left-1/2 -translate-x-1/2 ${bgClass} border p-6 rounded-2xl shadow-2xl z-50 w-full max-w-lg text-center`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-center mb-4">
                         <h3 className=${`text-xl font-bold ${textClass}`}>${TOUR_STEPS[step].title[lang]}</h3>
                         <span className="text-xs text-slate-500 font-mono">${step + 1} / ${TOUR_STEPS.length}</span>
@@ -660,7 +682,7 @@
                     }}
                                     font=${lang === 'fa' ? FA_FONT_URL : undefined}
                                 >
-                                    ${country.name[lang]}
+                                    ${country.name[lang] || ''}
                                 </${Text}>
                             </${Billboard}>
                         </group>
@@ -779,29 +801,31 @@
             const presetBtnClass = theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
 
             return html`
-                <div className=${`absolute top-6 ${lang === 'fa' ? 'left-6 flex-row-reverse' : 'right-6 flex-row'} z-50 flex items-start gap-2 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
+                <div className=${`absolute top-4 md:top-6 ${lang === 'fa' ? 'left-4 md:left-6 flex-row-reverse' : 'right-4 md:right-6 flex-row'} z-50 flex items-start gap-1.5 md:gap-2 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
                     
-                    <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`rounded-lg border w-12 h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        ${theme === 'dark' ? html`<${Icons.Sun} size=${16} className="mb-1"/> Light` : html`<${Icons.Moon} size=${16} className="mb-1"/> Dark`}
+                    <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
+                        ${theme === 'dark' ? html`<${Icons.Sun} size=${16} className="mb-0 md:mb-1"/>` : html`<${Icons.Moon} size=${16} className="mb-0 md:mb-1"/>`}
+                        <span className="hidden md:inline">${theme === 'dark' ? 'Light' : 'Dark'}</span>
                     </button>
 
-                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className=${`rounded-lg border w-12 h-12 flex flex-col items-center justify-center shadow-xl font-bold text-xs shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        <${Icons.Lang} size=${16} className="mb-1"/>${lang === 'en' ? 'FA' : 'EN'}
+                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[10px] md:text-xs shrink-0 transition-transform active:scale-95 ${btnClass}`}>
+                        <${Icons.Lang} size=${16} className="mb-0 md:mb-1"/>
+                        <span className="hidden md:inline">${lang === 'en' ? 'FA' : 'EN'}</span>
                     </button>
                     
-                    <div className=${`${bgClass} rounded-xl backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out font-fa`} style=${{ width: isExpanded ? '18rem' : '3rem', height: isExpanded ? 'auto' : '3rem', maxHeight: isExpanded ? '600px' : '3rem' }} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)}>
-                        ${!isExpanded && html`<div className=${`w-full h-full flex items-center justify-center cursor-pointer transition-colors ${iconColor}`}><${Icons.Settings} size=${24} /></div>`}
+                    <div className=${`${bgClass} rounded-xl backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'w-[16rem] md:w-[18rem] max-h-[80vh] overflow-y-auto' : 'w-9 h-9 md:w-12 md:h-12'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)} onClick=${() => !isExpanded && setIsExpanded(true)}>
+                        ${!isExpanded && html`<div className=${`w-full h-full flex items-center justify-center cursor-pointer transition-colors ${iconColor}`}><${Icons.Settings} size=${20} /></div>`}
                         ${isExpanded && html`
-                            <div className="p-4 opacity-0 animate-fadeIn">
-                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400`}><${Icons.Layout} size=${14} /> ${UI_TEXT.viewControls[lang]}</h3>
-                                <div className="grid grid-cols-4 gap-2 mb-4">
-                                    <button onClick=${() => setViewMode('default')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.iso[lang]}</button>
-                                    <button onClick=${() => setViewMode('front')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.front[lang]}</button>
-                                    <button onClick=${() => setViewMode('right')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.right[lang]}</button>
-                                    <button onClick=${() => setViewMode('top')} className=${`p-1 rounded text-xs ${presetBtnClass}`}>${UI_TEXT.top[lang]}</button>
+                            <div className="p-3 md:p-4 opacity-0 animate-fadeIn">
+                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wider text-slate-400`}><${Icons.Layout} size=${14} /> ${UI_TEXT.viewControls[lang]}</h3>
+                                <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-4">
+                                    <button onClick=${() => setViewMode('default')} className=${`p-1 rounded text-[10px] md:text-xs ${presetBtnClass}`}>${UI_TEXT.iso[lang]}</button>
+                                    <button onClick=${() => setViewMode('front')} className=${`p-1 rounded text-[10px] md:text-xs ${presetBtnClass}`}>${UI_TEXT.front[lang]}</button>
+                                    <button onClick=${() => setViewMode('right')} className=${`p-1 rounded text-[10px] md:text-xs ${presetBtnClass}`}>${UI_TEXT.right[lang]}</button>
+                                    <button onClick=${() => setViewMode('top')} className=${`p-1 rounded text-[10px] md:text-xs ${presetBtnClass}`}>${UI_TEXT.top[lang]}</button>
                                 </div>
                                 <hr className=${theme === 'dark' ? 'border-slate-700 mb-4' : 'border-slate-100 mb-4'}/>
-                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400`}><${Icons.Arrows} size=${14} /> ${UI_TEXT.dataMapping[lang]}</h3>
+                                <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wider text-slate-400`}><${Icons.Arrows} size=${14} /> ${UI_TEXT.dataMapping[lang]}</h3>
                                 <${MetricSelect} axis="x" value=${mapping.x} />
                                 <${MetricSelect} axis="y" value=${mapping.y} />
                                 <${MetricSelect} axis="z" value=${mapping.z} />
@@ -833,12 +857,12 @@
             return html`
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-4 flex flex-col justify-between z-10" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-start pointer-events-auto w-full">
-                        <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block font-fa`}>
+                        <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block`}>
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">${UI_TEXT.title[lang]}</h1>
                             <div className=${`flex items-center gap-2 text-xs mb-2 ${textMuted}`}><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
                             <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
                         </div>
-                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} font-fa pointer-events-auto`}>
+                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} pointer-events-auto`}>
                             <h1 className="text-sm font-bold text-blue-600">${UI_TEXT.title[lang]}</h1>
                         </div>
                         
@@ -846,7 +870,7 @@
                     </div>
 
                     ${showAbout ? html`
-                        <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto font-fa ${theme === 'dark' ? 'bg-black/60' : 'bg-black/30'}`} onClick=${() => setShowAbout(false)}>
+                        <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto ${theme === 'dark' ? 'bg-black/60' : 'bg-black/30'}`} onClick=${() => setShowAbout(false)}>
                              <div className=${`${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'} border p-6 rounded-2xl shadow-2xl max-w-md m-4 relative w-full`} onClick=${e => e.stopPropagation()}>
                                 <button onClick=${() => setShowAbout(false)} className=${`absolute top-4 right-4 ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-800'}`}><${Icons.X} size=${20}/></button>
                                 <h2 className=${`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>${UI_TEXT.aboutMe[lang]}</h2>
@@ -867,7 +891,7 @@
                     ` : null}
 
                     ${data ? html`
-                        <div className=${`absolute ${lang === 'fa' ? 'md:left-6' : 'md:right-6'} md:top-24 md:w-80 md:h-auto bottom-0 left-0 w-full md:bottom-auto pointer-events-auto max-h-[50vh] md:max-h-[80vh] overflow-y-auto scrollbar-hide p-4 md:p-0 font-fa`}>
+                        <div className=${`absolute ${lang === 'fa' ? 'md:left-6' : 'md:right-6'} md:top-24 md:w-80 md:h-auto bottom-0 left-0 w-full md:bottom-auto pointer-events-auto max-h-[50vh] md:max-h-[80vh] overflow-y-auto scrollbar-hide p-4 md:p-0`}>
                              <div className=${`${dataCardBg} p-6 rounded-xl shadow-2xl border-t-4 md:border-t-0 md:border-l-4 border-blue-500 backdrop-blur-md transition-all duration-300`}>
                                 <div className="flex justify-between items-start">
                                     <div>
@@ -918,11 +942,12 @@
 
         function App() {
             const [hovered, setHovered] = useState(null);
-            const [view, setView] = useState({ mode: 'default' });
+            const [view, setView] = useState({ mode: 'front' }); // Default to front (2D map)
             const [lang, setLang] = useState('en');
             const [theme, setTheme] = useState('dark');
 
-            const [config, setConfig] = useState({ axes: { x: true, y: true, z: true }, showLabels: true, showIdeologies: false, showFigures: false });
+            // Turn off Z-axis by default to create a true 2D default map
+            const [config, setConfig] = useState({ axes: { x: true, y: true, z: false }, showLabels: true, showIdeologies: false, showFigures: false });
             const [mapping, setMapping] = useState({ x: 'econ', y: 'cult', z: 'auth' });
             const [tourStep, setTourStep] = useState(-1);
             const [showWelcome, setShowWelcome] = useState(true);
@@ -971,8 +996,8 @@
             }, [theme]);
 
             return html`
-                <div className=${`w-full h-full relative font-sans transition-colors duration-500 ${lang === 'fa' ? 'font-fa' : ''} ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#f1f5f9]'}`}>
-                    ${showWelcome ? html`<${WelcomeModal} startTour=${() => { setShowWelcome(false); setTourStep(0); }} close=${() => setShowWelcome(false)} lang=${lang} theme=${theme} />` : null}
+                <div className=${`w-full h-full relative transition-colors duration-500 ${lang === 'fa' ? 'font-dana' : 'font-sans'} ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#f1f5f9]'}`}>
+                    ${showWelcome ? html`<${WelcomeModal} startTour=${() => { setShowWelcome(false); setTourStep(0); }} close=${() => setShowWelcome(false)} lang=${lang} setLang=${setLang} theme=${theme} />` : null}
                     ${tourStep > -1 ? html`<${TourControls} step=${tourStep} next=${() => tourStep < TOUR_STEPS.length - 1 ? setTourStep(s => s + 1) : setTourStep(-1)} prev=${() => setTourStep(s => s - 1)} skip=${() => setTourStep(-1)} lang=${lang} theme=${theme} />` : null}
                     <${Overlay} hoveredCountry=${hovered} countries=${countries} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} tourStep=${tourStep} setTourStep=${setTourStep} setShowWelcome=${setShowWelcome} />
                     
@@ -987,9 +1012,13 @@
                         <pointLight position=${[10, 10, 10]} intensity=${1} />
                         <pointLight position=${[-10, -10, -10]} intensity=${0.5} color="#3b82f6" />
                         ${theme === 'dark' ? html`<${Stars} radius=${100} depth=${50} count=${5000} factor=${4} saturation=${0} fade speed=${1} />` : null}
-                        <group position=${[0, 0, 0]}>
-                            <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${countries} config=${config} mapping=${mapping} lang=${lang} theme=${theme} />
-                        </group>
+                        
+                        <${Suspense} fallback=${null}>
+                            <group position=${[0, 0, 0]}>
+                                <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${countries} config=${config} mapping=${mapping} lang=${lang} theme=${theme} />
+                            </group>
+                        </${Suspense}>
+                        
                         <${OrbitControls} enablePan=${true} enableZoom=${true} minDistance=${5} maxDistance=${100} autoRotate=${false} />
                     </${Canvas}>
                 </div>
