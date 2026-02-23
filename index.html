@@ -200,7 +200,7 @@
             by: { en: "By Ali Noorani ↗️", fa: "اثر علی نورانی ↗️" },
             viewControls: { en: "View Controls", fa: "کنترل‌های نما" },
             axesVisibility: { en: "Axes Visibility", fa: "نمایش محورها" },
-            countryNames: { en: "Country Names", fa: "نام کشورها" },
+            countryNames: { en: "Countries", fa: "کشورها" },
             polLabels: { en: "Political Labels", fa: "برچسب‌های سیاسی" },
             polFigures: { en: "Political Figures", fa: "چهره‌های سیاسی" },
             hdi: { en: "Human Development", fa: "توسعه انسانی" },
@@ -540,9 +540,10 @@
 
             useFrame(() => {
                 if (groupRef.current) {
-                    const targetX = config.axes.x ? label.pos[0] : -10;
-                    const targetY = config.axes.y ? label.pos[1] : -10;
-                    const targetZ = config.axes.z ? label.pos[2] : -10;
+                    // Instead of pushing to -10 when an axis is off, we collapse it to 0 so it flattens onto the 2D plane!
+                    const targetX = config.axes.x ? label.pos[0] : 0;
+                    const targetY = config.axes.y ? label.pos[1] : 0;
+                    const targetZ = config.axes.z ? label.pos[2] : 0;
 
                     const targetVec = new THREE.Vector3(targetX, targetY, targetZ);
                     groupRef.current.position.lerp(targetVec, 0.1);
@@ -568,20 +569,22 @@
 
         const IdeologyLabels = ({ visible, config, lang, theme }) => {
             if (!visible) return null;
+
+            // Adjusted coordinates so they look great both in 3D and when flattened into 2D
             const items = [
-                { text: UI_TEXT.libertarian[lang], pos: [8, 8, 8], color: theme === 'dark' ? "#fbbf24" : "#b45309", req: ['z'] },
-                { text: UI_TEXT.authLeft[lang], pos: [-8, -5, -8], color: theme === 'dark' ? "#f87171" : "#b91c1c", req: ['z', 'x'] },
-                { text: UI_TEXT.socDem[lang], pos: [-5, 5, 8], color: theme === 'dark' ? "#4ade80" : "#15803d", req: ['x', 'z'] },
-                { text: UI_TEXT.trad[lang], pos: [0, -9, 0], color: theme === 'dark' ? "#f472b6" : "#be185d", req: ['y'] },
-                { text: UI_TEXT.theo[lang], pos: [0, -9, -8], color: theme === 'dark' ? "#a855f7" : "#7e22ce", req: ['y', 'z'] },
-                { text: UI_TEXT.prog[lang], pos: [0, 9, 0], color: theme === 'dark' ? "#2dd4bf" : "#0f766e", req: ['y'] },
-                { text: UI_TEXT.fascism[lang], pos: [0, 8, -9], color: theme === 'dark' ? "#7f1d1d" : "#7f1d1d", req: ['z'] },
-                { text: UI_TEXT.libDem[lang], pos: [5, 0, 8], color: theme === 'dark' ? "#3b82f6" : "#1d4ed8", req: ['z'] }
+                { text: UI_TEXT.libertarian[lang], pos: [8, -2, 8], color: theme === 'dark' ? "#fbbf24" : "#b45309" },
+                { text: UI_TEXT.authLeft[lang], pos: [-8, -2, -8], color: theme === 'dark' ? "#f87171" : "#b91c1c" },
+                { text: UI_TEXT.socDem[lang], pos: [-6, 4, 8], color: theme === 'dark' ? "#4ade80" : "#15803d" },
+                { text: UI_TEXT.trad[lang], pos: [0, -9, 0], color: theme === 'dark' ? "#f472b6" : "#be185d" },
+                { text: UI_TEXT.theo[lang], pos: [-2, -8, -8], color: theme === 'dark' ? "#a855f7" : "#7e22ce" },
+                { text: UI_TEXT.prog[lang], pos: [0, 9, 0], color: theme === 'dark' ? "#2dd4bf" : "#0f766e" },
+                { text: UI_TEXT.fascism[lang], pos: [4, -6, -9], color: theme === 'dark' ? "#7f1d1d" : "#7f1d1d" },
+                { text: UI_TEXT.libDem[lang], pos: [6, 6, 8], color: theme === 'dark' ? "#3b82f6" : "#1d4ed8" }
             ];
+
             return html`
                 <group>
                     ${items.map((l, i) => {
-                if (l.req && !l.req.every(a => config.axes[a])) return null;
                 return html`<${IdeologyLabelItem} key=${i} label=${l} config=${config} lang=${lang} theme=${theme} />`;
             })}
                 </group>
@@ -629,6 +632,14 @@
                 lo = [0, stag, 0];
             } else if (activeAxesCount === 0) {
                 lo = [0, 0.6, 0];
+            } else if (isFigure) {
+                // Stagger political figures vertically in 2D/3D to prevent overlapping!
+                showLine = true;
+                const idx = country.index;
+                const isUp = idx % 2 === 0;
+                const tier = (idx % 4) + 1; // Increased to 4 distinct height tiers
+                const offset = 1.5 + (tier * 1.5); // Drastically increased height gap: 3.0, 4.5, 6.0, 7.5
+                lo = [0, isUp ? offset : -offset, 0];
             }
 
             const textColor = isFigure ? (theme === 'dark' ? "#fcd34d" : "#d97706") : (theme === 'dark' ? "white" : "#0f172a");
@@ -708,8 +719,11 @@
             const getM = (id) => METRICS_CONFIG[id];
 
             const visibleEntities = useMemo(() => {
-                return countries.filter(c => c.type !== 'figure' || config.showFigures);
-            }, [countries, config.showFigures]);
+                return countries.filter(c => {
+                    if (c.type === 'figure') return config.showFigures;
+                    return config.showLabels; // Completely hides country dots + labels when toggled off
+                });
+            }, [countries, config.showFigures, config.showLabels]);
 
             const staggerMap = useMemo(() => {
                 if (activeAxesCount !== 1) return null;
