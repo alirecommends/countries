@@ -169,7 +169,8 @@
             Moon: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
             Camera: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
             Share: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" y2="15"/></svg>`,
-            Check: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polyline points="20 6 9 17 4 12"/></svg>`
+            Check: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polyline points="20 6 9 17 4 12"/></svg>`,
+            Chart: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`
         };
 
         // --- 3D FONT URL ---
@@ -255,7 +256,8 @@
             endTour: { en: "End Tour", fa: "پایان تور" },
             save: { en: "Save", fa: "ذخیره" },
             share: { en: "Share", fa: "اشتراک" },
-            copied: { en: "Copied!", fa: "کپی شد" }
+            copied: { en: "Copied!", fa: "کپی شد" },
+            globeTip: { en: "Tip: Select metrics in the settings menu to view data.", fa: "نکته: برای مشاهده داده‌ها، شاخص‌ها را از منوی تنظیمات انتخاب کنید." }
         };
 
         const RAW_DATA = [
@@ -289,7 +291,7 @@
             { name: { en: "Adolf Hitler", fa: "آدولف هیتلر" }, code: "AH", metrics: { econ: 40, auth: 0.1, cult: -2.5 }, hdi: 0.5, type: "figure", region: null, desc: { en: "Fascist dictator. Economy was state-directed capitalism.", fa: "دیکتاتور فاشیست. اقتصاد سرمایه‌داری هدایت‌شده توسط دولت." } },
             { name: { en: "Bernie Sanders", fa: "برنی سندرز" }, code: "BS", metrics: { econ: 40, auth: 8.5, cult: 2.0 }, hdi: 0.9, type: "figure", region: null, desc: { en: "Democratic Socialist.", fa: "سوسیالیست دموکراتیک." } },
             { name: { en: "Donald Trump", fa: "دونالد ترامپ" }, code: "DT", metrics: { econ: 75, auth: 5.5, cult: -1.5 }, hdi: 0.9, type: "figure", region: null, desc: { en: "Right-wing populist.", fa: "پوپولیست راست‌گرا." } },
-            { name: { en: "Augusto Pinochet", fa: "آگوستو پینوشه" }, code: "AP", metrics: { econ: 85, auth: 1.5, cult: -1.5 }, hdi: 0.7, type: "figure", region: null, desc: { en: "Military dictator who implemented radical free-market reforms.", fa: "دیکتاتور نظامی که اصلاحات رادیکال بازار آزاد را اجرا کرد." } },
+            { name: { en: "Augusto Pinochet", fa: "آگوستو Pinochet" }, code: "AP", metrics: { econ: 85, auth: 1.5, cult: -1.5 }, hdi: 0.7, type: "figure", region: null, desc: { en: "Military dictator who implemented radical free-market reforms.", fa: "دیکتاتور نظامی که اصلاحات رادیکال بازار آزاد را اجرا کرد." } },
             { name: { en: "Nelson Mandela", fa: "نلسون ماندلا" }, code: "NM", metrics: { econ: 50, auth: 9.5, cult: 1.0 }, hdi: 0.7, type: "figure", region: null, desc: { en: "Symbol of democracy and reconciliation.", fa: "نماد دموکراسی و آشتی." } },
             { name: { en: "Reza Shah Pahlavi", fa: "رضا شاه پهلوی" }, code: "RS", metrics: { econ: 45, auth: 1.5, cult: 1.0 }, hdi: 0.5, type: "figure", region: null, desc: { en: "Authoritarian Modernizer.", fa: "نوساز اقتدارگرا." } },
             { name: { en: "Ruhollah Khomeini", fa: "روح‌الله خمینی" }, code: "RK", metrics: { econ: 30, auth: 1.0, cult: -2.5 }, hdi: 0.6, type: "figure", region: null, desc: { en: "Leader of the Islamic Revolution.", fa: "رهبر انقلاب اسلامی." } },
@@ -853,8 +855,8 @@
                 <div className="flex flex-col mb-2">
                     <div className="flex justify-between items-center mb-1">
                          <span className="text-[10px] font-bold text-slate-400 uppercase">${UI_TEXT[`axis${axis.toUpperCase()}`][lang]}</span>
-                         <button onClick=${() => toggleAxis(axis)} className=${`text-xs hover:text-${theme === 'dark' ? 'white' : 'slate-600'} text-slate-400`}>
-                             ${config.axes[axis] ? html`<${Icons.Eye} size=${12} />` : html`<${Icons.EyeOff} size=${12} />`}
+                         <button onClick=${() => toggleAxis(axis)} className=${`text-xs transition-colors hover:text-${theme === 'dark' ? 'white' : 'slate-600'} text-slate-400`}>
+                             ${config.axes[axis] ? html`<${Icons.Eye} size=${12} className="text-emerald-500" />` : html`<${Icons.EyeOff} size=${12} />`}
                          </button>
                     </div>
                     <select 
@@ -876,32 +878,37 @@
             const presetBtnClass = theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
 
             return html`
-                <div className=${`absolute top-4 md:top-6 ${lang === 'fa' ? 'left-4 md:left-6 flex-row-reverse' : 'right-4 md:right-6 flex-row'} z-50 flex items-start gap-1.5 md:gap-2 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
+                <div className=${`absolute top-4 md:top-6 ${lang === 'fa' ? 'left-4 md:left-6' : 'right-4 md:right-6'} z-50 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
                     
-                    <button onClick=${handleScreenshot} title=${UI_TEXT.save[lang]} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        <${Icons.Camera} size=${16} className="mb-0 md:mb-1"/>
-                        <span className="hidden md:inline">${UI_TEXT.save[lang]}</span>
-                    </button>
-
-                    <button onClick=${handleShare} title=${UI_TEXT.share[lang]} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        ${copied ? html`<${Icons.Check} size=${16} className="mb-0 md:mb-1 text-green-500"/>` : html`<${Icons.Share} size=${16} className="mb-0 md:mb-1"/>`}
-                        <span className="hidden md:inline">${copied ? UI_TEXT.copied[lang] : UI_TEXT.share[lang]}</span>
-                    </button>
-
-                    <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        ${theme === 'dark' ? html`<${Icons.Sun} size=${16} className="mb-0 md:mb-1"/>` : html`<${Icons.Moon} size=${16} className="mb-0 md:mb-1"/>`}
-                        <span className="hidden md:inline">${theme === 'dark' ? 'Light' : 'Dark'}</span>
-                    </button>
-
-                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[10px] md:text-xs shrink-0 transition-transform active:scale-95 ${btnClass}`}>
-                        <${Icons.Lang} size=${16} className="mb-0 md:mb-1"/>
-                        <span className="hidden md:inline">${lang === 'en' ? 'FA' : 'EN'}</span>
-                    </button>
-                    
-                    <div className=${`${bgClass} rounded-xl backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'w-[16rem] md:w-[18rem] max-h-[80vh] overflow-y-auto' : 'w-9 h-9 md:w-12 md:h-12'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)} onClick=${() => !isExpanded && setIsExpanded(true)}>
-                        ${!isExpanded && html`<div className=${`w-full h-full flex items-center justify-center cursor-pointer transition-colors ${iconColor}`}><${Icons.Settings} size=${20} /></div>`}
+                    <div className=${`${bgClass} border rounded-xl backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 ease-in-out font-fa ${isExpanded ? 'w-[16rem] md:w-[18rem] max-h-[80vh] overflow-y-auto' : 'w-10 h-10 md:w-12 md:h-12'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'} onMouseEnter=${() => setIsExpanded(true)} onClick=${() => !isExpanded && setIsExpanded(true)}>
+                        ${!isExpanded && html`<div className=${`w-full h-full flex items-center justify-center cursor-pointer transition-colors ${iconColor}`}><${Icons.Chart} size=${20} /></div>`}
                         ${isExpanded && html`
                             <div className="p-3 md:p-4 opacity-0 animate-fadeIn">
+                                
+                                <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-4">
+                                    <button onClick=${handleScreenshot} title=${UI_TEXT.save[lang]} className=${`p-2 rounded flex flex-col items-center justify-center gap-1 ${presetBtnClass} active:scale-95 transition-transform`}>
+                                        <${Icons.Camera} size=${16}/>
+                                        <span className="text-[9px] md:text-[10px] font-bold">${UI_TEXT.save[lang]}</span>
+                                    </button>
+
+                                    <button onClick=${handleShare} title=${UI_TEXT.share[lang]} className=${`p-2 rounded flex flex-col items-center justify-center gap-1 ${presetBtnClass} active:scale-95 transition-transform`}>
+                                        ${copied ? html`<${Icons.Check} size=${16} className="text-green-500"/>` : html`<${Icons.Share} size=${16}/>`}
+                                        <span className="text-[9px] md:text-[10px] font-bold">${copied ? UI_TEXT.copied[lang] : UI_TEXT.share[lang]}</span>
+                                    </button>
+
+                                    <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`p-2 rounded flex flex-col items-center justify-center gap-1 ${presetBtnClass} active:scale-95 transition-transform`}>
+                                        ${theme === 'dark' ? html`<${Icons.Sun} size=${16}/>` : html`<${Icons.Moon} size=${16}/>`}
+                                        <span className="text-[9px] md:text-[10px] font-bold">${theme === 'dark' ? 'Light' : 'Dark'}</span>
+                                    </button>
+
+                                    <button onClick=${() => setLang(prev => prev === 'en' ? 'fa' : 'en')} className=${`p-2 rounded flex flex-col items-center justify-center gap-1 ${presetBtnClass} active:scale-95 transition-transform`}>
+                                        <${Icons.Lang} size=${16}/>
+                                        <span className="text-[9px] md:text-[10px] font-bold">${lang === 'en' ? 'FA' : 'EN'}</span>
+                                    </button>
+                                </div>
+
+                                <hr className=${theme === 'dark' ? 'border-slate-700 mb-4' : 'border-slate-100 mb-4'}/>
+
                                 <h3 className=${`${titleColor} font-bold mb-2 flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wider text-slate-400`}><${Icons.Layout} size=${14} /> ${UI_TEXT.viewControls[lang]}</h3>
                                 <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-4">
                                     <button onClick=${() => setViewMode('default')} className=${`p-1 rounded text-[10px] md:text-xs ${presetBtnClass}`}>${UI_TEXT.iso[lang]}</button>
@@ -939,6 +946,10 @@
             const metricBarBg = theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200';
             const hrBorder = theme === 'dark' ? 'border-slate-800' : 'border-slate-100';
 
+            const isGlobeMode = !(config.axes.x && mapping.x !== 'none') &&
+                !(config.axes.y && mapping.y !== 'none') &&
+                !(config.axes.z && mapping.z !== 'none');
+
             return html`
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-4 flex flex-col justify-between z-10" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-start pointer-events-auto w-full">
@@ -973,6 +984,13 @@
                                     <a href="https://ko-fi.com/N4N61QZPXB" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#72a4f2] hover:bg-[#5b8ddb] text-white px-4 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg mx-auto"><${Icons.Coffee} size=${18} fill="currentColor" /><span>${UI_TEXT.buyCoffee[lang]}</span></a>
                                 </div>
                             </div>
+                        </div>
+                    ` : null}
+
+                    ${isGlobeMode && tourStep === -1 ? html`
+                        <div className=${`absolute bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg backdrop-blur-md border flex items-center gap-2 animate-fadeIn pointer-events-auto transition-colors ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700 text-blue-400' : 'bg-white/90 border-slate-200 text-blue-600'}`}>
+                            <${Icons.Info} size=${18} />
+                            <span className="text-sm font-bold whitespace-nowrap">${UI_TEXT.globeTip[lang]}</span>
                         </div>
                     ` : null}
 
@@ -1032,6 +1050,7 @@
             const [lang, setLang] = useState('en');
             const [theme, setTheme] = useState('light'); // Default to light mode
 
+            // Turn off Z-axis by default to create a true 2D default map
             const [config, setConfig] = useState({ axes: { x: true, y: true, z: false }, showLabels: true, showIdeologies: false, showFigures: false });
             const [mapping, setMapping] = useState({ x: 'econ', y: 'cult', z: 'auth' });
             const [tourStep, setTourStep] = useState(-1);
