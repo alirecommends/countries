@@ -166,7 +166,10 @@
             Instagram: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
             Coffee: ({ size = 18, className = "", fill = "currentColor" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill=${fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>`,
             Sun: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-            Moon: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
+            Moon: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+            Camera: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
+            Share: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" y2="15"/></svg>`,
+            Check: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polyline points="20 6 9 17 4 12"/></svg>`
         };
 
         // --- 3D FONT URL ---
@@ -249,7 +252,10 @@
             explore: { en: "Explore Freely", fa: "کاوش آزادانه" },
             next: { en: "Next", fa: "بعدی" },
             prev: { en: "Back", fa: "قبلی" },
-            endTour: { en: "End Tour", fa: "پایان تور" }
+            endTour: { en: "End Tour", fa: "پایان تور" },
+            save: { en: "Save", fa: "ذخیره" },
+            share: { en: "Share", fa: "اشتراک" },
+            copied: { en: "Copied!", fa: "کپی شد" }
         };
 
         const RAW_DATA = [
@@ -388,7 +394,7 @@
             const btnClass = theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100';
 
             return html`
-                <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-md z-50 p-4 ${theme === 'dark' ? 'bg-black/80' : 'bg-white/60'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
+                <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-md z-50 p-4 font-fa ${theme === 'dark' ? 'bg-black/80' : 'bg-white/60'}`} dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className=${`${bgClass} border p-6 md:p-8 rounded-2xl shadow-2xl max-w-lg text-center w-full`}>
                         
                         <div className="flex justify-center gap-4 mb-6">
@@ -759,6 +765,7 @@
             const toggle = (key) => setConfig(prev => ({ ...prev, [key]: !prev[key] }));
             const setViewMode = (mode) => setView({ mode });
             const [isExpanded, setIsExpanded] = useState(false);
+            const [copied, setCopied] = useState(false);
 
             const toggleAxis = (axis) => {
                 const nextAxes = { ...config.axes, [axis]: !config.axes[axis] };
@@ -771,6 +778,83 @@
                     else if (!nextAxes.x) setView({ mode: 'right' });
                 } else if (activeCount === 3) {
                     setView({ mode: 'default' });
+                }
+            };
+
+            const handleScreenshot = () => {
+                const glCanvas = document.querySelector('canvas');
+                if (glCanvas) {
+                    // Create a temporary canvas to combine the WebGL scene and the watermark
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = glCanvas.width;
+                    tempCanvas.height = glCanvas.height;
+                    const ctx = tempCanvas.getContext('2d');
+
+                    // Draw the 3D scene onto the 2D canvas
+                    ctx.drawImage(glCanvas, 0, 0);
+
+                    // Scale font based on device pixel ratio so it looks sharp on retina displays
+                    const pixelRatio = window.devicePixelRatio || 1;
+                    const baseFontSize = 18 * pixelRatio;
+
+                    // Set text properties
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'bottom';
+
+                    // Add subtle shadow for contrast on both light and dark backgrounds
+                    ctx.shadowColor = theme === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+                    ctx.shadowBlur = 6 * pixelRatio;
+                    ctx.fillStyle = theme === 'dark' ? 'rgba(255,255,255,0.9)' : 'rgba(15,23,42,0.9)';
+
+                    // Positioning
+                    const paddingX = 24 * pixelRatio;
+                    const paddingY = 24 * pixelRatio;
+                    const textX = tempCanvas.width - paddingX;
+                    const textY = tempCanvas.height - paddingY;
+
+                    // Draw Line 2 (URL)
+                    ctx.font = `500 ${baseFontSize * 0.8}px sans-serif`;
+                    ctx.fillText("democracyindex.vercel.app", textX, textY);
+
+                    // Draw Line 1 (Name)
+                    ctx.font = `bold ${baseFontSize}px sans-serif`;
+                    ctx.fillText("A Visual by Ali Noorani", textX, textY - (baseFontSize * 1.2));
+
+                    // Generate image and download
+                    const image = tempCanvas.toDataURL("image/png");
+                    const link = document.createElement('a');
+                    link.download = 'global-data-explorer.png';
+                    link.href = image;
+                    link.click();
+                }
+            };
+
+            const handleShare = async () => {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: UI_TEXT.title[lang],
+                            text: UI_TEXT.welcomeText[lang],
+                            url: window.location.href
+                        });
+                    } catch (err) {
+                        console.log('Share canceled or failed', err);
+                    }
+                } else {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    } catch (err) {
+                        const input = document.createElement('input');
+                        input.value = window.location.href;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    }
                 }
             };
 
@@ -803,6 +887,16 @@
             return html`
                 <div className=${`absolute top-4 md:top-6 ${lang === 'fa' ? 'left-4 md:left-6 flex-row-reverse' : 'right-4 md:right-6 flex-row'} z-50 flex items-start gap-1.5 md:gap-2 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
                     
+                    <button onClick=${handleScreenshot} title=${UI_TEXT.save[lang]} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
+                        <${Icons.Camera} size=${16} className="mb-0 md:mb-1"/>
+                        <span className="hidden md:inline">${UI_TEXT.save[lang]}</span>
+                    </button>
+
+                    <button onClick=${handleShare} title=${UI_TEXT.share[lang]} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
+                        ${copied ? html`<${Icons.Check} size=${16} className="mb-0 md:mb-1 text-green-500"/>` : html`<${Icons.Share} size=${16} className="mb-0 md:mb-1"/>`}
+                        <span className="hidden md:inline">${copied ? UI_TEXT.copied[lang] : UI_TEXT.share[lang]}</span>
+                    </button>
+
                     <button onClick=${() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className=${`rounded-lg border w-9 h-9 md:w-12 md:h-12 flex flex-col items-center justify-center shadow-xl font-bold text-[9px] md:text-[10px] shrink-0 transition-transform active:scale-95 ${btnClass}`}>
                         ${theme === 'dark' ? html`<${Icons.Sun} size=${16} className="mb-0 md:mb-1"/>` : html`<${Icons.Moon} size=${16} className="mb-0 md:mb-1"/>`}
                         <span className="hidden md:inline">${theme === 'dark' ? 'Light' : 'Dark'}</span>
@@ -857,20 +951,21 @@
             return html`
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-4 flex flex-col justify-between z-10" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-start pointer-events-auto w-full">
-                        <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block`}>
+                        <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block font-fa`}>
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">${UI_TEXT.title[lang]}</h1>
                             <div className=${`flex items-center gap-2 text-xs mb-2 ${textMuted}`}><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
                             <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
                         </div>
-                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} pointer-events-auto`}>
+                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} font-fa pointer-events-auto`}>
                             <h1 className="text-sm font-bold text-blue-600">${UI_TEXT.title[lang]}</h1>
+                            <div className="mt-1 text-[10px] text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
                         </div>
                         
                         ${tourStep === -1 ? html`<${TopControls} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} />` : null}
                     </div>
 
                     ${showAbout ? html`
-                        <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto ${theme === 'dark' ? 'bg-black/60' : 'bg-black/30'}`} onClick=${() => setShowAbout(false)}>
+                        <div className=${`absolute inset-0 flex items-center justify-center backdrop-blur-sm z-50 pointer-events-auto font-fa ${theme === 'dark' ? 'bg-black/60' : 'bg-black/30'}`} onClick=${() => setShowAbout(false)}>
                              <div className=${`${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'} border p-6 rounded-2xl shadow-2xl max-w-md m-4 relative w-full`} onClick=${e => e.stopPropagation()}>
                                 <button onClick=${() => setShowAbout(false)} className=${`absolute top-4 right-4 ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-800'}`}><${Icons.X} size=${20}/></button>
                                 <h2 className=${`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>${UI_TEXT.aboutMe[lang]}</h2>
@@ -891,7 +986,7 @@
                     ` : null}
 
                     ${data ? html`
-                        <div className=${`absolute ${lang === 'fa' ? 'md:left-6' : 'md:right-6'} md:top-24 md:w-80 md:h-auto bottom-0 left-0 w-full md:bottom-auto pointer-events-auto max-h-[50vh] md:max-h-[80vh] overflow-y-auto scrollbar-hide p-4 md:p-0`}>
+                        <div className=${`absolute ${lang === 'fa' ? 'md:left-6' : 'md:right-6'} md:top-24 md:w-80 md:h-auto bottom-0 left-0 w-full md:bottom-auto pointer-events-auto max-h-[50vh] md:max-h-[80vh] overflow-y-auto scrollbar-hide p-4 md:p-0 font-fa`}>
                              <div className=${`${dataCardBg} p-6 rounded-xl shadow-2xl border-t-4 md:border-t-0 md:border-l-4 border-blue-500 backdrop-blur-md transition-all duration-300`}>
                                 <div className="flex justify-between items-start">
                                     <div>
@@ -1004,6 +1099,7 @@
                     <${Canvas} 
                         camera=${{ position: [20, 15, 20], fov: 45 }}
                         onPointerMissed=${() => setHovered(null)} 
+                        gl=${{ preserveDrawingBuffer: true }}
                     >
                         <color attach="background" args=${[theme === 'dark' ? '#0f172a' : '#f1f5f9']} />
                         <fog attach="fog" args=${[theme === 'dark' ? '#0f172a' : '#f1f5f9', 80, 200]} />
