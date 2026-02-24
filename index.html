@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Data Explorer 3D</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -129,6 +130,9 @@
         }
     }
     </script>
+
+    <!-- Vercel Web Analytics -->
+    <script src="/_vercel/insights/script.js"></script>
 </head>
 
 <body>
@@ -169,7 +173,8 @@
             Camera: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
             Share: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" y2="15"/></svg>`,
             Check: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><polyline points="20 6 9 17 4 12"/></svg>`,
-            Chart: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`
+            Chart: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`,
+            Search: ({ size = 24, className = "" }) => html`<svg xmlns="http://www.w3.org/2000/svg" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className=${className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`
         };
 
         // --- 3D FONT URL ---
@@ -256,7 +261,21 @@
             save: { en: "Save", fa: "ذخیره" },
             share: { en: "Share", fa: "اشتراک" },
             copied: { en: "Copied!", fa: "کپی شد" },
-            globeTip: { en: "Tip: Select metrics in the settings menu to view data.", fa: "نکته: برای مشاهده داده‌ها، شاخص‌ها را از منوی تنظیمات انتخاب کنید." }
+            globeTip: { en: "Tip: Select metrics in the settings menu to view data.", fa: "نکته: برای مشاهده داده‌ها، شاخص‌ها را از منوی تنظیمات انتخاب کنید." },
+            search: { en: "Search...", fa: "جستجو..." },
+            allRegions: { en: "All Regions", fa: "همه مناطق" },
+            mapLegend: { en: "Map Legend:", fa: "راهنمای نقشه:" },
+            colorLegend: { en: "Color: HDI (Red = Low, Green = High)", fa: "رنگ: توسعه انسانی (قرمز = پایین، سبز = بالا)" }
+        };
+
+        const REGIONS = {
+            "West": { en: "West", fa: "غرب" },
+            "Scandinavia": { en: "Scandinavia", fa: "اسکاندیناوی" },
+            "Asia": { en: "Asia", fa: "آسیا" },
+            "Middle East": { en: "Middle East", fa: "خاورمیانه" },
+            "Europe": { en: "Europe", fa: "اروپا" },
+            "Eurasia": { en: "Eurasia", fa: "اوراسیا" },
+            "South America": { en: "South America", fa: "آمریکای جنوبی" }
         };
 
         const RAW_DATA = [
@@ -717,13 +736,6 @@
             const isGlobeMode = activeAxesCount === 0;
             const getM = (id) => METRICS_CONFIG[id];
 
-            const visibleEntities = useMemo(() => {
-                return countries.filter(c => {
-                    if (c.type === 'figure') return config.showFigures;
-                    return config.showLabels; // Completely hides country dots + labels when toggled off
-                });
-            }, [countries, config.showFigures, config.showLabels]);
-
             const staggerMap = useMemo(() => {
                 if (activeAxesCount !== 1) return null;
                 let activeMetricKey = null;
@@ -733,14 +745,14 @@
 
                 if (!activeMetricKey) return null;
 
-                const sorted = [...visibleEntities].sort((a, b) => {
+                const sorted = [...countries].sort((a, b) => {
                     return (a.pos[activeMetricKey] || 0) - (b.pos[activeMetricKey] || 0);
                 });
 
                 const map = {};
                 sorted.forEach((c, i) => { map[c.code] = i; });
                 return map;
-            }, [visibleEntities, activeAxesCount, isX, isY, isZ, mapping]);
+            }, [countries, activeAxesCount, isX, isY, isZ, mapping]);
 
             const inactiveAxisColor = theme === 'dark' ? "#94a3b8" : "#cbd5e1";
 
@@ -768,7 +780,7 @@
                         <${IdeologyLabels} visible=${config.showIdeologies} config=${config} lang=${lang} theme=${theme} />
                     ` : null}
 
-                    ${visibleEntities.map((c, i) => {
+                    ${countries.map((c, i) => {
                 const staggerIndex = staggerMap ? staggerMap[c.code] : c.index;
                 return html`<${CountrySphere} key=${c.code} country=${c} hovered=${hovered} setHovered=${setHovered} showLabels=${config.showLabels} config=${config} mapping=${mapping} activeAxesCount=${activeAxesCount} lang=${lang} staggerIndex=${staggerIndex} theme=${theme} />`
             })}
@@ -806,11 +818,7 @@
 
                     ctx.drawImage(glCanvas, 0, 0);
 
-                    // Scale font based on canvas resolution to keep it consistent across devices
                     const baseFontSize = Math.max(14, tempCanvas.width * 0.012);
-
-                    ctx.textAlign = 'right';
-                    ctx.textBaseline = 'bottom';
 
                     ctx.shadowColor = theme === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
                     ctx.shadowBlur = 4;
@@ -818,14 +826,45 @@
 
                     const paddingX = baseFontSize * 1.5;
                     const paddingY = baseFontSize * 1.5;
-                    const textX = tempCanvas.width - paddingX;
-                    const textY = tempCanvas.height - paddingY;
 
-                    ctx.font = `500 ${baseFontSize * 0.8}px sans-serif`;
-                    ctx.fillText("democracyindex.vercel.app", textX, textY);
+                    const isFa = lang === 'fa';
+                    const watermarkX = isFa ? paddingX : tempCanvas.width - paddingX;
+                    const legendX = isFa ? tempCanvas.width - paddingX : paddingX;
 
-                    ctx.font = `bold ${baseFontSize}px sans-serif`;
-                    ctx.fillText("A Visual by Ali Noorani", textX, textY - (baseFontSize * 1.2));
+                    ctx.textBaseline = 'bottom';
+
+                    // --- Watermark ---
+                    ctx.textAlign = isFa ? 'left' : 'right';
+                    let currentWatermarkY = tempCanvas.height - paddingY;
+                    ctx.font = `500 ${baseFontSize * 0.8}px 'Dana', sans-serif`;
+                    ctx.fillText("democracyindex.vercel.app", watermarkX, currentWatermarkY);
+                    currentWatermarkY -= baseFontSize * 1.2;
+                    ctx.font = `bold ${baseFontSize}px 'Dana', sans-serif`;
+                    ctx.fillText(isFa ? "تصویرسازی از علی نورانی" : "A Visual by Ali Noorani", watermarkX, currentWatermarkY);
+
+                    // --- Legend ---
+                    ctx.textAlign = isFa ? 'right' : 'left';
+                    let currentLegendY = tempCanvas.height - paddingY;
+
+                    ctx.font = `500 ${baseFontSize * 0.85}px 'Dana', sans-serif`;
+                    ctx.fillText(UI_TEXT.colorLegend[lang], legendX, currentLegendY);
+                    currentLegendY -= baseFontSize * 1.3;
+
+                    if (config.axes.z && mapping.z !== 'none') {
+                        ctx.fillText(`Z: ${METRICS_CONFIG[mapping.z].label[lang]}`, legendX, currentLegendY);
+                        currentLegendY -= baseFontSize * 1.3;
+                    }
+                    if (config.axes.y && mapping.y !== 'none') {
+                        ctx.fillText(`Y: ${METRICS_CONFIG[mapping.y].label[lang]}`, legendX, currentLegendY);
+                        currentLegendY -= baseFontSize * 1.3;
+                    }
+                    if (config.axes.x && mapping.x !== 'none') {
+                        ctx.fillText(`X: ${METRICS_CONFIG[mapping.x].label[lang]}`, legendX, currentLegendY);
+                        currentLegendY -= baseFontSize * 1.3;
+                    }
+
+                    ctx.font = `bold ${baseFontSize}px 'Dana', sans-serif`;
+                    ctx.fillText(UI_TEXT.mapLegend[lang], legendX, currentLegendY - (baseFontSize * 0.3));
 
                     const image = tempCanvas.toDataURL("image/png");
                     const link = document.createElement('a');
@@ -885,10 +924,9 @@
             `;
 
             const bgClass = theme === 'dark' ? 'bg-slate-900/90 border-slate-700 text-slate-300' : 'bg-white/90 border-slate-200 text-slate-700';
-            const btnClass = theme === 'dark' ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+            const presetBtnClass = theme === 'dark' ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
             const iconColor = theme === 'dark' ? 'hover:text-white' : 'hover:text-blue-600';
             const titleColor = theme === 'dark' ? 'text-white' : 'text-slate-800';
-            const presetBtnClass = theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
 
             return html`
                 <div className=${`absolute top-4 md:top-6 ${lang === 'fa' ? 'left-4 md:left-6' : 'right-4 md:right-6'} z-50 pointer-events-auto transition-all duration-300`} onMouseLeave=${() => setIsExpanded(false)}>
@@ -947,7 +985,32 @@
             `;
         };
 
-        const Overlay = ({ hoveredCountry, countries, config, setConfig, setView, mapping, setMapping, lang, setLang, theme, setTheme, tourStep, setTourStep, setShowWelcome }) => {
+        const SearchFilterBar = ({ lang, theme, searchQuery, setSearchQuery, selectedRegion, setSelectedRegion }) => {
+            return html`
+                <div className=${`flex flex-col gap-2 mt-4 pt-4 border-t w-full pointer-events-auto ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                    <div className="relative flex items-center w-full">
+                        <${Icons.Search} size=${14} className=${`absolute ${lang === 'fa' ? 'right-2.5' : 'left-2.5'} text-slate-400`} />
+                        <input 
+                            type="text" 
+                            placeholder=${UI_TEXT.search[lang]} 
+                            value=${searchQuery} 
+                            onInput=${e => setSearchQuery(e.target.value)}
+                            className=${`w-full ${lang === 'fa' ? 'pr-8 pl-3' : 'pl-8 pr-3'} py-1.5 text-xs rounded-lg border outline-none transition-colors ${theme === 'dark' ? 'bg-slate-800 text-white border-slate-600 focus:border-blue-500 placeholder-slate-500' : 'bg-slate-50 text-slate-800 border-slate-200 focus:border-blue-500 placeholder-slate-400'}`}
+                        />
+                    </div>
+                    <select 
+                        value=${selectedRegion} 
+                        onChange=${e => setSelectedRegion(e.target.value)}
+                        className=${`w-full px-2 py-1.5 text-xs rounded-lg border outline-none cursor-pointer transition-colors ${theme === 'dark' ? 'bg-slate-800 text-white border-slate-600 focus:border-blue-500' : 'bg-slate-50 text-slate-800 border-slate-200 focus:border-blue-500'}`}
+                    >
+                        <option value="All">${UI_TEXT.allRegions[lang]}</option>
+                        ${Object.entries(REGIONS).map(([key, label]) => html`<option key=${key} value=${key}>${label[lang]}</option>`)}
+                    </select>
+                </div>
+            `;
+        };
+
+        const Overlay = ({ hoveredCountry, countries, config, setConfig, setView, mapping, setMapping, lang, setLang, theme, setTheme, tourStep, setTourStep, setShowWelcome, searchQuery, setSearchQuery, selectedRegion, setSelectedRegion }) => {
             const data = countries.find(c => c.name[lang] === hoveredCountry);
             const [showAbout, setShowAbout] = useState(false);
 
@@ -969,11 +1032,13 @@
                         <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block font-fa`}>
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">${UI_TEXT.title[lang]}</h1>
                             <div className=${`flex items-center gap-2 text-xs mb-2 ${textMuted}`}><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
-                            <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                            <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                            <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
                         </div>
-                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4' : 'left-4'} font-fa pointer-events-auto`}>
+                        <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4 left-16' : 'left-4 right-16'} font-fa pointer-events-auto`}>
                             <h1 className="text-sm font-bold text-blue-600">${UI_TEXT.title[lang]}</h1>
-                            <div className="mt-1 text-[10px] text-blue-500 cursor-pointer transition-colors" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                            <div className="mt-1 mb-1 text-[10px] text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                            <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
                         </div>
                         
                         ${tourStep === -1 ? html`<${TopControls} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} />` : null}
@@ -1068,6 +1133,8 @@
             const [mapping, setMapping] = useState({ x: 'econ', y: 'cult', z: 'auth' });
             const [tourStep, setTourStep] = useState(-1);
             const [showWelcome, setShowWelcome] = useState(true);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [selectedRegion, setSelectedRegion] = useState('All');
 
             useEffect(() => {
                 if (tourStep > -1 && tourStep < TOUR_STEPS.length) {
@@ -1090,33 +1157,50 @@
                 return ((val - m.min) / (m.max - m.min)) * 20 - 10;
             };
 
-            const countries = useMemo(() => {
-                const combined = [...RAW_DATA, ...FIGURES_DATA].map((c, i) => {
-                    const pos = {};
-                    Object.keys(METRICS_CONFIG).forEach(key => {
-                        const val = c.metrics?.[key];
-                        pos[key] = normalize(val !== undefined ? val : METRICS_CONFIG[key].min, key);
+            const visibleCountries = useMemo(() => {
+                return [...RAW_DATA, ...FIGURES_DATA]
+                    .map((c, i) => {
+                        const pos = {};
+                        Object.keys(METRICS_CONFIG).forEach(key => {
+                            const val = c.metrics?.[key];
+                            pos[key] = normalize(val !== undefined ? val : METRICS_CONFIG[key].min, key);
+                        });
+
+                        const rankGlobal = (pos.econ + 10);
+
+                        return {
+                            ...c,
+                            index: i,
+                            pos: pos,
+                            color: c.type === 'figure' ? '#f59e0b' : ((c.hdi < 0.7) ? new THREE.Color('#ef4444').lerp(new THREE.Color('#eab308'), (c.hdi - 0.5) * 2) : new THREE.Color('#eab308').lerp(new THREE.Color(theme === 'dark' ? '#22c55e' : '#16a34a'), (c.hdi - 0.7) * 3.3)),
+                            rankGlobal: rankGlobal,
+                            rankEcon: rankGlobal
+                        };
+                    })
+                    .filter(c => {
+                        // Toggles
+                        if (c.type === 'figure' && !config.showFigures) return false;
+                        if (c.type !== 'figure' && !config.showLabels) return false;
+
+                        // Region filter
+                        if (selectedRegion !== 'All' && (!c.region || c.region.en !== selectedRegion)) return false;
+
+                        // Search filter
+                        if (searchQuery) {
+                            const q = searchQuery.toLowerCase();
+                            const matchEn = c.name.en.toLowerCase().includes(q);
+                            const matchFa = c.name.fa.toLowerCase().includes(q);
+                            if (!matchEn && !matchFa) return false;
+                        }
+                        return true;
                     });
-
-                    const rankGlobal = (pos.econ + 10);
-
-                    return {
-                        ...c,
-                        index: i,
-                        pos: pos,
-                        color: c.type === 'figure' ? '#f59e0b' : ((c.hdi < 0.7) ? new THREE.Color('#ef4444').lerp(new THREE.Color('#eab308'), (c.hdi - 0.5) * 2) : new THREE.Color('#eab308').lerp(new THREE.Color(theme === 'dark' ? '#22c55e' : '#16a34a'), (c.hdi - 0.7) * 3.3)),
-                        rankGlobal: rankGlobal,
-                        rankEcon: rankGlobal
-                    };
-                });
-                return combined;
-            }, [theme]);
+            }, [theme, config.showFigures, config.showLabels, selectedRegion, searchQuery]);
 
             return html`
                 <div className=${`w-full h-full relative transition-colors duration-500 ${lang === 'fa' ? 'font-dana' : 'font-sans'} ${theme === 'dark' ? 'bg-[#0f172a]' : 'bg-[#f1f5f9]'}`}>
                     ${showWelcome ? html`<${WelcomeModal} startTour=${() => { setShowWelcome(false); setTourStep(0); }} close=${() => setShowWelcome(false)} lang=${lang} setLang=${setLang} theme=${theme} />` : null}
                     ${tourStep > -1 ? html`<${TourControls} step=${tourStep} next=${() => tourStep < TOUR_STEPS.length - 1 ? setTourStep(s => s + 1) : setTourStep(-1)} prev=${() => setTourStep(s => s - 1)} skip=${() => setTourStep(-1)} lang=${lang} theme=${theme} />` : null}
-                    <${Overlay} hoveredCountry=${hovered} countries=${countries} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} tourStep=${tourStep} setTourStep=${setTourStep} setShowWelcome=${setShowWelcome} />
+                    <${Overlay} hoveredCountry=${hovered} countries=${visibleCountries} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} tourStep=${tourStep} setTourStep=${setTourStep} setShowWelcome=${setShowWelcome} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
                     
                     <${Canvas} 
                         camera=${{ position: [20, 15, 20], fov: 45 }}
@@ -1133,7 +1217,7 @@
                         
                         <${Suspense} fallback=${null}>
                             <group position=${[0, 0, 0]}>
-                                <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${countries} config=${config} mapping=${mapping} lang=${lang} theme=${theme} />
+                                <${ScatterPlot} hovered=${hovered} setHovered=${setHovered} countries=${visibleCountries} config=${config} mapping=${mapping} lang=${lang} theme=${theme} />
                             </group>
                         </${Suspense}>
                         
@@ -1146,7 +1230,6 @@
         const root = createRoot(document.getElementById('root'));
         root.render(html`<${App} />`);
     </script>
-    <Analytics />
 </body>
 
 </html>
