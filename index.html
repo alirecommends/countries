@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!-- 
+========================================================================
+   Global Data Explorer 3D
+   Copyright (c) 2026 Ali Noorani. All Rights Reserved.
+   
+   A visual and interactive exploration of global political, economic, 
+   and cultural data.
+========================================================================
+-->
 <html lang="en">
 
 <head>
@@ -265,7 +274,8 @@
             search: { en: "Search...", fa: "جستجو..." },
             allRegions: { en: "All Regions", fa: "همه مناطق" },
             mapLegend: { en: "Map Legend:", fa: "راهنمای نقشه:" },
-            colorLegend: { en: "Color: HDI (Red = Low, Green = High)", fa: "رنگ: توسعه انسانی (قرمز = پایین، سبز = بالا)" }
+            colorLegend: { en: "Color: HDI (Red = Low, Green = High)", fa: "رنگ: توسعه انسانی (قرمز = پایین، سبز = بالا)" },
+            copyright: { en: "© 2026 Ali Noorani. All rights reserved.", fa: "© ۲۰۲۶ علی نورانی. تمامی حقوق محفوظ است." }
         };
 
         const REGIONS = {
@@ -987,7 +997,7 @@
 
         const SearchFilterBar = ({ lang, theme, searchQuery, setSearchQuery, selectedRegion, setSelectedRegion }) => {
             return html`
-                <div className=${`flex flex-col gap-2 mt-4 pt-4 border-t w-full pointer-events-auto ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                <div className=${`flex flex-col gap-2 mt-3 pt-3 border-t w-full pointer-events-auto ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
                     <div className="relative flex items-center w-full">
                         <${Icons.Search} size=${14} className=${`absolute ${lang === 'fa' ? 'right-2.5' : 'left-2.5'} text-slate-400`} />
                         <input 
@@ -1013,6 +1023,8 @@
         const Overlay = ({ hoveredCountry, countries, config, setConfig, setView, mapping, setMapping, lang, setLang, theme, setTheme, tourStep, setTourStep, setShowWelcome, searchQuery, setSearchQuery, selectedRegion, setSelectedRegion }) => {
             const data = countries.find(c => c.name[lang] === hoveredCountry);
             const [showAbout, setShowAbout] = useState(false);
+            const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+            const hasActiveFilters = searchQuery !== '' || selectedRegion !== 'All';
 
             const cardBg = theme === 'dark' ? 'bg-slate-900/90 text-white border-slate-700' : 'bg-white/90 text-slate-800 border-slate-200';
             const dataCardBg = theme === 'dark' ? 'bg-slate-900/95 text-white border-slate-700' : 'bg-white/95 text-slate-800 border-slate-200';
@@ -1026,19 +1038,49 @@
                 !(config.axes.y && mapping.y !== 'none') &&
                 !(config.axes.z && mapping.z !== 'none');
 
+            // Defined a button style that matches the current theme and active filter state
+            const searchBtnClass = theme === 'dark'
+                ? (hasActiveFilters ? 'text-blue-400 bg-blue-900/40 border border-blue-800/50' : 'text-slate-400 bg-slate-800 border border-slate-700 hover:bg-slate-700')
+                : (hasActiveFilters ? 'text-blue-600 bg-blue-50 border border-blue-200' : 'text-slate-500 bg-white border border-slate-200 hover:bg-slate-50');
+
             return html`
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-4 flex flex-col justify-between z-10" dir=${lang === 'fa' ? 'rtl' : 'ltr'}>
                     <div className="flex justify-between items-start pointer-events-auto w-full">
                         <div className=${`${cardBg} p-6 rounded-2xl shadow-xl backdrop-blur-sm border max-w-sm hidden md:block font-fa`}>
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">${UI_TEXT.title[lang]}</h1>
                             <div className=${`flex items-center gap-2 text-xs mb-2 ${textMuted}`}><${Icons.Info} size=${14} /><span>${UI_TEXT.subtitle[lang]}</span></div>
-                            <div className="mt-2 text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
-                            <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
+                            
+                            <div className="mt-4 flex justify-between items-end">
+                                <div className="text-xs text-blue-600 hover:text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                                <button 
+                                    onClick=${() => setIsSearchExpanded(!isSearchExpanded)}
+                                    className=${`p-2 rounded-xl transition-all shadow-sm ${searchBtnClass}`}
+                                >
+                                    <${Icons.Search} size=${18} />
+                                </button>
+                            </div>
+
+                            <div className=${`overflow-hidden transition-all duration-300 ease-in-out ${isSearchExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
+                            </div>
                         </div>
+                        
                         <div className=${`md:hidden ${cardBg} p-3 rounded-xl border backdrop-blur-sm absolute top-4 ${lang === 'fa' ? 'right-4 left-16' : 'left-4 right-16'} font-fa pointer-events-auto`}>
                             <h1 className="text-sm font-bold text-blue-600">${UI_TEXT.title[lang]}</h1>
-                            <div className="mt-1 mb-1 text-[10px] text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
-                            <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
+                            
+                            <div className="mt-2 flex justify-between items-end">
+                                <div className="text-[10px] text-blue-500 cursor-pointer transition-colors inline-block" onClick=${() => setShowAbout(true)}>${UI_TEXT.by[lang]}</div>
+                                <button 
+                                    onClick=${() => setIsSearchExpanded(!isSearchExpanded)}
+                                    className=${`p-1.5 rounded-lg transition-all shadow-sm ${searchBtnClass}`}
+                                >
+                                    <${Icons.Search} size=${16} />
+                                </button>
+                            </div>
+
+                            <div className=${`overflow-hidden transition-all duration-300 ease-in-out ${isSearchExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <${SearchFilterBar} lang=${lang} theme=${theme} searchQuery=${searchQuery} setSearchQuery=${setSearchQuery} selectedRegion=${selectedRegion} setSelectedRegion=${setSelectedRegion} />
+                            </div>
                         </div>
                         
                         ${tourStep === -1 ? html`<${TopControls} config=${config} setConfig=${setConfig} setView=${setView} mapping=${mapping} setMapping=${setMapping} lang=${lang} setLang=${setLang} theme=${theme} setTheme=${setTheme} />` : null}
@@ -1059,7 +1101,8 @@
                                 <hr className=${`my-4 ${hrBorder}`} />
                                 <div className="text-center">
                                     <p className=${`text-xs mb-3 ${textMuted}`}>${UI_TEXT.support[lang]}</p>
-                                    <a href="https://ko-fi.com/N4N61QZPXB" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#72a4f2] hover:bg-[#5b8ddb] text-white px-4 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg mx-auto"><${Icons.Coffee} size=${18} fill="currentColor" /><span>${UI_TEXT.buyCoffee[lang]}</span></a>
+                                    <a href="https://ko-fi.com/N4N61QZPXB" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#72a4f2] hover:bg-[#5b8ddb] text-white px-4 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg mx-auto mb-4"><${Icons.Coffee} size=${18} fill="currentColor" /><span>${UI_TEXT.buyCoffee[lang]}</span></a>
+                                    <p className=${`text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>${UI_TEXT.copyright[lang]}</p>
                                 </div>
                             </div>
                         </div>
